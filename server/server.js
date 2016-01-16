@@ -1,7 +1,7 @@
 var WebSocketServer = require('websocket').server;
 var http = require('http');
 
-var clients = [];
+var CLIENTS = [];
 
 var server = http.createServer(function(request, response) {
     // process HTTP request. Since we're writing just WebSockets server
@@ -27,8 +27,12 @@ wsServer.on('request', function(request) {
         if (message.type === 'utf8') {
             // process WebSocket message
             if (message.utf8Data === 'connected') {
-                connection.sendUTF("connection accepted")
-                clients[0] = connection;
+                var id = CLIENTS.length;
+                connection.send(JSON.stringify({
+                    "id" : id,
+                    "message" : "connection accepted"
+                }));
+                CLIENTS.push(connection);
             } else if (message.utf8Data === 'ping') {
                 connection.sendUTF("pong")
             }
