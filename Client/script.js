@@ -2,15 +2,27 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log("DOM ready");
     // Save player object
     var player = document.getElementById('player');
-    var trackHeading = document.getElementById('track-title');
+
+    console.log("player object is exposed as window.player");
+    window.player = player;
+
+    trackHeading = document.getElementById('track-title');
+    bufferView = document.getElementById("track-buffered");
 
     // Once URL is received, set it as the player.src
     //player.src="https://api.soundcloud.com/tracks/293/stream?client_id=86e82361b4e6d0f88da0838793618a92"
     player.src="https://api.soundcloud.com/tracks/53126096/stream?client_id=86e82361b4e6d0f88da0838793618a92"
     trackHeading.innerHTML = "Marijuana by Chrome Sparks";
     // After the player is ready and ws says play
+    playerReady = true;
     player.play();
 });
+
+function l(object){ console.log(object); }
+
+var playerReady = false;
+var trackHeading;
+var bufferView;
 
 
 // Setup connection with Webserver via websocket
@@ -24,7 +36,7 @@ exampleSocket.onerror = function (error){
 //Close HANDLERS
 exampleSocket.onclose = function (event){
     console.log("WS Closed ", event);
-    alert("Connecton to Server Closed");
+    //alert("Connecton to Server Closed");
 }
 
 // Connection ready listener
@@ -41,7 +53,7 @@ exampleSocket.onmessage = function (event) {
 /// WEBSOCKET EVENT HANDLERS
 
 
-// Button control functions
+//***************** Player control functions/API *****************
 function play (){
     player.play();
 }
@@ -49,6 +61,53 @@ function play (){
 function pause(){
     player.pause();
 }
+
+function playerStartTime(){
+    console.log( "playerStartTime", player.seekable.start(0) );
+    return player.seekable.start(0);  // Returns the starting time (in seconds)
+}
+
+function playerEndingTime(){
+    console.log( "playerEndingTime", player.seekable.end(0) );
+    return player.seekable.end(0);    // Returns the ending time (in seconds)
+}
+
+function setPlayerTime(seconds){
+    console.log( "setPlayerTime", player.currentTime = seconds );
+    return player.currentTime = seconds; // Seek to 122 seconds
+}
+
+function getPlayerCurrentTime(){
+    console.log( "getPlayerCurrentTime", player.played.end(0) );
+    return player.played.end(0);      // Returns the number of seconds the browser has played
+}
+
+function getBufferedValue(){
+    // Return what decimal of track has been buffered
+    //console.log( "getBufferedValue", player.buffered );
+    var timeRanges = player.buffered;
+
+    if (timeRanges.length > 0){
+        // If length is greater than 0 then there is atleast some buffering done
+        // Only check the first buffer to see if it starts are zero
+        var start = timeRanges.start(0);
+        if (start === 0) {
+        // If it starts at zero then check for where it ends, that is the buffer length
+            return timeRanges.end(0) / playerEndingTime();
+
+        } else { return 0; } // Else return zer0
+
+    } else { return 0; } // Else return zer0
+
+}
+//***************** Player control functions/API *****************
+
+function updateBufferVals(){
+    var bufferVal = getBufferedValue();
+    bufferView.innerHTML = String(bufferVal);
+    console.log("Current buffer value: ", bufferVal);
+}
+
 
 var JSON = {
     streamURL: "https://api.soundcloud.com/tracks/53126096/stream?client_id=86e82361b4e6d0f88da0838793618a92",
