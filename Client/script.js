@@ -15,7 +15,8 @@ document.addEventListener('DOMContentLoaded', function() {
     trackHeading.innerHTML = "Marijuana by Chrome Sparks";
     // After the player is ready and ws says play
     playerReady = true;
-    player.play();
+    player.controls = true;
+    //player.play();
 });
 
 function l(object){ console.log(object); }
@@ -78,8 +79,8 @@ function setPlayerTime(seconds){
 }
 
 function getPlayerCurrentTime(){
-    console.log( "getPlayerCurrentTime", player.played.end(0) );
-    return player.played.end(0);      // Returns the number of seconds the browser has played
+    console.log("getPlayerCurrentTime", player.currentTime);
+    return player.currentTime;  
 }
 
 function getBufferedValue(){
@@ -107,6 +108,8 @@ function updateBufferVals(){
     bufferView.innerHTML = String(bufferVal);
     console.log("Current buffer value: ", bufferVal);
 }
+
+// Buffer reference -- https://developer.mozilla.org/en-US/Apps/Build/Audio_and_video_delivery/buffering_seeking_time_ranges
 
 
 var JSON = {
