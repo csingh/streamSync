@@ -16,11 +16,18 @@
 
     <body>
         <h1 id="track-title">No Track Yet</h1>
-        <audio id="player"> <!-- controls attribute also shows the seekbar -->
+        <audio id="player" preload="auto"> <!-- controls attribute also shows the seekbar -->
             Your browser does not support the audio element.
         </audio>
         <button onclick="play()">Play</button>
         <button onclick="pause()">Pause</button>
+        <br>
+
+        <button onclick="playerStartTime()">playerStartTime</button>
+        <button onclick="playerEndingTime()">playerEndingTime</button>
+        <button onclick="setPlayerTime(15)">setPlayerTime</button>
+        <button onclick="getPlayerCurrentTime()">getPlayerCurrentTime</button>
+        <button onclick="getBufferedValue()">getBufferedValue</button>
         <!-- <audio id="player" src="">Audio not supported</audio> -->
     </body>
 </html>
