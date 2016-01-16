@@ -2,11 +2,12 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log("DOM ready");
     // Save player object
     var player = document.getElementById('player');
+    var trackHeading = document.getElementById('track-title');
 
     // Once URL is received, set it as the player.src
     //player.src="https://api.soundcloud.com/tracks/293/stream?client_id=86e82361b4e6d0f88da0838793618a92"
     player.src="https://api.soundcloud.com/tracks/53126096/stream?client_id=86e82361b4e6d0f88da0838793618a92"
-
+    trackHeading.innerHTML = "Marijuana by Chrome Sparks";
     // After the player is ready and ws says play
     player.play();
 });
@@ -15,11 +16,39 @@ document.addEventListener('DOMContentLoaded', function() {
 // Setup connection with Webserver via websocket
 var exampleSocket = new WebSocket("ws://www.example.com/socketserver", "streamSync");
 
-// Once connection is setup wait for events to trigger
+//Error HANDLERS
+exampleSocket.onerror = function (error){
+    console.log("Error while establishing WS: ", error);
+}
 
+//Close HANDLERS
+exampleSocket.onclose = function (event){
+    console.log("WS Closed ", event);
+    alert("Connecton to Server Closed");
+}
+
+// Connection ready listener
+exampleSocket.onopen = function (event) {
+  //exampleSocket.send("Here's some text that the server is urgently awaiting!"); 
+  console.log("WebSocket Ready!");
+};
+
+// Once connection is setup wait for events to trigger
+exampleSocket.onmessage = function (event) {
+  console.log("Message Received: ", event.data);
+}
 
 /// WEBSOCKET EVENT HANDLERS
 
+
+// Button control functions
+function play (){
+    player.play();
+}
+
+function pause(){
+    player.pause();
+}
 
 var JSON = {
     streamURL: "https://api.soundcloud.com/tracks/53126096/stream?client_id=86e82361b4e6d0f88da0838793618a92",
