@@ -44,17 +44,26 @@ wsServer.on('request', function(request) {
                 });
                 sendJSON(connection, {
                     "message" : "newTrack",
-                    "streamURL" : STREAM_URL
+                    "streamURL" : STREAM_URL,
+                    "trackTitle" : "Fire Track by Flaming Lips"
                 });
                 CLIENTS.push(connection);
                 console.log("Connection from user " + id + " accepted.");
+
             } else if (json.message === 'ping') {
                 console.log("Ponging the ping.");
                 sendMessage(connection, "pong")
+
             } else if (json.message === 'play') {
                 console.log("Broadcasting play message to " + CLIENTS.length + " clients.");
                 for (var i = 0; i < CLIENTS.length; i++) {
                     sendMessage(CLIENTS[i], "play");
+                }
+
+            } else if (json.message === 'pause') {
+                console.log("Broadcasting pause message to " + CLIENTS.length + " clients.");
+                for (var i = 0; i < CLIENTS.length; i++) {
+                    sendMessage(CLIENTS[i], "pause");
                 }
             }
 
