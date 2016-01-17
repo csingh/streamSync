@@ -26,6 +26,19 @@
   width: 0;
 }
 
+.position {
+  margin-top: -20px;
+  height: 20px;  
+  position: relative;
+  width: 300px;
+}
+
+#position-cursor {
+  margin-left: -5px;
+  padding-left: 0px;
+  border: 0px;
+  color: red;
+}
 
 .synchronized-controls {
   margin-top: 15px; 
