@@ -5,7 +5,11 @@ $("#play").click(play);
 // if user is running mozilla then use it's built-in WebSocket
 window.WebSocket = window.WebSocket || window.MozWebSocket;
 
-var connection = new WebSocket('ws://127.0.0.1:1337');
+// var connection = new WebSocket('ws://127.0.0.1:1337');
+
+var heroku_url = "https://whispering-journey-4483.herokuapp.com"
+var host = heroku_url.replace(/^http/, 'ws')
+var connection = new WebSocket(host);
 
 var USER_ID = -1;
 
