@@ -95,6 +95,8 @@ wsServer.on('request', function(request) {
                     sendMessage(CLIENTS[i], "seek", "seek", json.seek);
 
                 }
+            } else if (json.message === 'seektime') {
+                console.log("User", json.user_id, "seek time:", json.seektime);
             } else if (json.message === 'newTrack') {
                 console.log("Broadcasting newTrack message to " + CLIENTS.length + " clients.");
                 for (var i = 0; i < CLIENTS.length; i++) {
