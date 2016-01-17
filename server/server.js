@@ -14,8 +14,6 @@ var server = http.createServer(app)
 server.listen(port)
 console.log("### LISTENING ON PORT " + port + ".");
 
-
-// create the server
 // create the server
 wsServer = new WebSocketServer({
     httpServer: server
