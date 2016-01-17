@@ -1,0 +1,13 @@
+{
+  "name": "start-sync",
+  "description": "syncs music",
+  "version": "1.0.0",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js"
+  },
+  "engines": {
+    "node": "0.12.5",
+    "npm": "2.11.2"
+  }
+}
