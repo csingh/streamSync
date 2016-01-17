@@ -26,17 +26,23 @@
           <span id="progress-amount"></span>
         </div>
 
-        <button onclick="sendSynchronizedPlayRequest()">Play</button>
-        <button onclick="sendSynchronizedPauseRequest()">Pause</button>
+        <div class="synchronized-controls">
+            <h3>Synchronized Controls</h3>
+            <button onclick="sendSynchronizedPlayRequest()">Play</button>
+            <button onclick="sendSynchronizedPauseRequest()">Pause</button>
+            <button onclick="sendSynchronizedSeekRequest()">Set Time</button>
+            <input value="1" id="seek-input" type="number"></input>
+        </div>
         <br>
 
-        <button onclick="playerStartTime()">playerStartTime</button>
-        <button onclick="playerEndingTime()">playerEndingTime</button>
-        <button onclick="setPlayerTime(15)">setPlayerTime</button>
-        <button onclick="getPlayerCurrentTime()">getPlayerCurrentTime</button>
-        <button onclick="getBufferedValue()">getBufferedValue</button>
+        <div class="local-buttons">
+            <button onclick="playerStartTime()">playerStartTime</button>
+            <button onclick="playerEndingTime()">playerEndingTime</button>
+            <button onclick="setPlayerTime(15)">setPlayerTime</button>
+            <button onclick="getPlayerCurrentTime()">getPlayerCurrentTime</button>
+            <button onclick="getBufferedValue()">getBufferedValue</button>
         <!-- <audio id="player" src="">Audio not supported</audio> -->
-        <br>
+        </div>
 
         <button onclick="updateBufferVals()">updateBufferVals</button>
 
