@@ -14,7 +14,7 @@
     </head>
 
     <body>
-        <h1>Connected as user #<span id="user_id"></span>.</h1>
+        <h2>Connected as user #<span id="user_id"></span>.</h2>
         <h2 id="track-title">No Track Yet</h2>
         <audio id="player" preload="auto"> <!-- controls attribute also shows the seekbar -->
             Your browser does not support the audio element.
@@ -26,8 +26,8 @@
           <span id="progress-amount"></span>
         </div>
 
-        <button onclick="play()">Play</button>
-        <button onclick="pause()">Pause</button>
+        <button onclick="sendSynchronizedPlayRequest()">Play</button>
+        <button onclick="sendSynchronizedPauseRequest()">Pause</button>
         <br>
 
         <button onclick="playerStartTime()">playerStartTime</button>

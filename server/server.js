@@ -8,6 +8,7 @@ var port = process.env.PORT || 5000
 app.use(express.static(__dirname + "/"))
 
 
+var STREAM_URL = "https://api.soundcloud.com/tracks/53126096/stream?client_id=86e82361b4e6d0f88da0838793618a92";
 var CLIENTS = [];
 
 var server = http.createServer(app)
@@ -44,15 +45,28 @@ wsServer.on('request', function(request) {
                     "id" : id,
                     "message" : "connection accepted"
                 });
+                sendJSON(connection, {
+                    "message" : "newTrack",
+                    "streamURL" : STREAM_URL,
+                    "trackTitle" : "Fire Track by Flaming Lips"
+                });
                 CLIENTS.push(connection);
                 console.log("Connection from user " + id + " accepted.");
+
             } else if (json.message === 'ping') {
                 console.log("Ponging the ping.");
                 sendMessage(connection, "pong")
+
             } else if (json.message === 'play') {
                 console.log("Broadcasting play message to " + CLIENTS.length + " clients.");
                 for (var i = 0; i < CLIENTS.length; i++) {
-                    sendMessage(CLIENTS[i], "playing");
+                    sendMessage(CLIENTS[i], "play");
+                }
+
+            } else if (json.message === 'pause') {
+                console.log("Broadcasting pause message to " + CLIENTS.length + " clients.");
+                for (var i = 0; i < CLIENTS.length; i++) {
+                    sendMessage(CLIENTS[i], "pause");
                 }
             }
 
