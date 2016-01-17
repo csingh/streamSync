@@ -1,34 +1,13 @@
 <html>
-  <head>
-    <style>
-      body {
-        font-family: "Helvetica Neue", helvetica, arial;
-        padding: 15px;
-      }
+<head>
+    <title>Hai2u</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+</head>
 
-      ul {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-      }
+<body>
+    <p>Connected as user #<span id="user_id"></span></p>
+    <button id="play">play</button>
+</body>
 
-      ul li {
-        line-height: 1.4;
-      }
-    </style>
-
-    <script>
-      var host = location.origin.replace(/^http/, 'ws')
-      var ws = new WebSocket(host);
-      ws.onmessage = function (event) {
-        var li = document.createElement('li');
-        li.innerHTML = JSON.parse(event.data);
-        document.querySelector('#pings').appendChild(li);
-      };
-    </script>
-  </head>
-  <body>
-    <h1>Pings</h1>
-    <ul id='pings'></ul>
-  </body>
+<script src="client.js"></script>
 </html>
