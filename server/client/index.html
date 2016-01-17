@@ -11,6 +11,14 @@
         <script src="script.js"></script>
         <script src="progress_bar.js"></script>
 
+        <script src="https://connect.soundcloud.com/sdk/sdk-3.0.0.js"></script>
+        <script>
+        SC.initialize({
+            client_id: '86e82361b4e6d0f88da0838793618a92',
+          // redirect_uri: 'http://example.com/callback'
+        });
+        </script>
+
     </head>
 
     <body>
@@ -26,17 +34,26 @@
           <span id="progress-amount"></span>
         </div>
 
-        <button onclick="sendSynchronizedPlayRequest()">Play</button>
-        <button onclick="sendSynchronizedPauseRequest()">Pause</button>
-        <br>
+        <div class="synchronized-controls">
+            <h3>Synchronized Controls</h3>
+            <button onclick="sendSynchronizedPlayRequest()">Play</button>
+            <button onclick="sendSynchronizedPauseRequest()">Pause</button>
+            <button onclick="sendSynchronizedSeekRequest()">Set Time</button>
+            <input value="1" id="seek-input" type="number"></input>
+        </div>
+        <div>
+            SoundCloud Url: <input type="text" name="url" id="new-song-url">
+            <button onclick="sendNewTrackUrl()">New Song</button>
+        </div>
 
-        <button onclick="playerStartTime()">playerStartTime</button>
-        <button onclick="playerEndingTime()">playerEndingTime</button>
-        <button onclick="setPlayerTime(15)">setPlayerTime</button>
-        <button onclick="getPlayerCurrentTime()">getPlayerCurrentTime</button>
-        <button onclick="getBufferedValue()">getBufferedValue</button>
+        <div class="local-buttons">
+            <button onclick="playerStartTime()">playerStartTime</button>
+            <button onclick="playerEndingTime()">playerEndingTime</button>
+            <button onclick="setPlayerTime(15)">setPlayerTime</button>
+            <button onclick="getPlayerCurrentTime()">getPlayerCurrentTime</button>
+            <button onclick="getBufferedValue()">getBufferedValue</button>
         <!-- <audio id="player" src="">Audio not supported</audio> -->
-        <br>
+        </div>
 
         <button onclick="updateBufferVals()">updateBufferVals</button>
 

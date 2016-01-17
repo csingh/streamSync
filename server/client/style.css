@@ -25,3 +25,24 @@
   background-color: #595;
   width: 0;
 }
+
+
+.synchronized-controls {
+  margin-top: 15px; 
+  border: 1px solid black;
+  padding: 10px;
+}
+
+button {
+  height: 25px;
+}
+
+input {
+  height: 25px;
+}
+
+.local-buttons {
+  margin-top: 15px; 
+  border: 1px solid black;
+  padding: 10px;
+}

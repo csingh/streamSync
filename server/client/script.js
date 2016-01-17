@@ -15,17 +15,13 @@ document.addEventListener('DOMContentLoaded', function() {
     trackHeading = document.getElementById('track-title');
     bufferView = document.getElementById("track-buffered");
 
-    // Once URL is received, set it as the player.src
-    //player.src="https://api.soundcloud.com/tracks/293/stream?client_id=86e82361b4e6d0f88da0838793618a92"
-    // player.src="https://api.soundcloud.com/tracks/53126096/stream?client_id=86e82361b4e6d0f88da0838793618a92"
-    // trackHeading.innerHTML = "Marijuana by Chrome Sparks";
     // After the player is ready and ws says play
-    playerReady = true;
-    player.controls = true;
+    // playerReady = true;
+    //player.controls = true;
     //player.play();
 
     // Setup connection with Webserver via websocket
-    var host = location.origin.replace(/^http/, 'ws')
+    var host = location.origin.replace(/^http/, 'ws');
     exampleSocket = new WebSocket(host);
 
     //Error HANDLERS
@@ -98,16 +94,26 @@ function l(object){ console.log(object); }
 
 //***************** START::: Player control functions/API *****************
 function setTrack(url, trackTitle){
-    // Set track URL
-    player.src = url;
-
-    // Set Track name
-    if (trackTitle){ 
-        trackHeading.innerHTML = trackTitle; 
-
-    } else { 
-        trackHeading.innerHTML = "No track name provided..."; 
+    // Parse the SC URL
+    if (url){
+        return parseSoundCloudLink(url)
+        .then(function (sc_json){
+            // Set track URL
+            player.src = sc_json.stream_url;
+            trackHeading.innerHTML = sc_json.title +" by "+ sc_json.user.username;
+        });
     }
+
+    // // Set track URL
+    // player.src = url;
+
+    // // Set Track name
+    // if (trackTitle){ 
+    //     trackHeading.innerHTML = trackTitle; 
+
+    // } else { 
+    //     trackHeading.innerHTML = "No track name provided..."; 
+    // }
 }
 
 function play (){
@@ -129,7 +135,8 @@ function playerEndingTime(){
 }
 
 function setPlayerTime(seconds){
-    console.log( "setPlayerTime", player.currentTime = seconds );
+    console.log( "setPlayerTime", seconds );
+    player.currentTime = seconds;
     return player.currentTime = seconds; // Seek to 122 seconds
 }
 
@@ -181,10 +188,24 @@ function sendSynchronizedPauseRequest(){
 }
 
 function sendSynchronizedSeekRequest(seek){
-    sendJSON({ message: "seek", "seek": seek });
+    if (!seek){
+        // Get the seek time from id = seek-input
+        var seekInput = parseInt( $("#seek-input").val() );//.html(USER_ID);
+        if ( seekInput < playerEndingTime() ){
+            sendJSON({ message: "seek", "seek": seekInput });
+
+        } else { console.log("Value is longer than track length! ", seekInput); }
+    }
 }
 
-function sendNewTrackUrl(url){}
+function sendNewTrackUrl(url){
+    if (!url){
+        url = $('#new-song-url').val();
+    }
+    console.log("Sending SC Link: ", url);
+    sendMessage("newTrack", "streamURL", url);
+
+}
 
 function sendBufferValue(){}
 
@@ -215,9 +236,28 @@ function createServerMessage(type) {
 }
 
 function sendJSON(json_obj) {
+    console.log("### MESSAGE SENDING: ", JSON.stringify(json_obj));
     exampleSocket.send(JSON.stringify(json_obj));
 }
 
-function sendMessage(msg) {
-    sendJSON({"message" : msg});
+function sendMessage(msg, extra, value) {
+    var obj = { "message" : msg };
+
+    // Add in extra parameters for things like seek or new track
+    if (extra && value){ 
+        obj[extra] = value; 
+    }
+
+    sendJSON(obj);
 }
+
+// SOUNDCLOUD PARSING LOGIC
+function parseSoundCloudLink (url){
+    return SC.resolve(url)
+        .then(function (json_msg){ 
+            console.log("Link Resolved: ", json_msg);
+            json_msg.stream_url += "?client_id=86e82361b4e6d0f88da0838793618a92";
+            return json_msg;
+        });
+}
+
