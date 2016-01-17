@@ -55,6 +55,10 @@ exampleSocket.onmessage = function (event) {
 
 
 //***************** Player control functions/API *****************
+function setTrack(url){
+    player.src = url;
+}
+
 function play (){
     player.play();
 }
@@ -120,10 +124,22 @@ var JSON = {
     pause: false
 }
 
+//***************** Server control functions/API *****************
+
+// Send requests
+function sendSynchronizedPlayRequest(){}
+
+function sendSynchronizedPlayRequest(){}
+
+function sendSynchronizedSeekRequest(){}
+
+function sendNewTrackUrl(url){}
+
+//***************** Server control functions/API *****************
 
 
 // Send update message to server
-function sendText(type) {
+function createServerMessage(type) {
 
     switch(type){
         case "play":
@@ -140,10 +156,13 @@ function sendText(type) {
             console.log("sendText function received unhandled type: ", type); 
             return;
     }
-
-  // Send the msg object as a JSON-formatted string.
-  exampleSocket.send(JSON.stringify(msg));
   
   // Blank the text input element, ready to receive the next line of text from the user.
   //document.getElementById("text").value = "";
+}
+
+function sendMessage(msg){
+  // Send the msg object as a JSON-formatted string.
+  console.log("Sending message...", msg);
+  exampleSocket.send(JSON.stringify(msg));
 }
