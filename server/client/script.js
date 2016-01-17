@@ -3,6 +3,8 @@ var trackHeading;
 var bufferView;
 var USER_ID = -1;
 var exampleSocket;
+var PINGTIME = 0;
+var PONGTIME = 0;
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log("DOM ready");
@@ -17,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // After the player is ready and ws says play
     // playerReady = true;
-    //player.controls = true;
+    player.controls = true;
     //player.play();
 
     // Setup connection with Webserver via websocket
@@ -80,12 +82,29 @@ document.addEventListener('DOMContentLoaded', function() {
             case "play":
                 play(json.offset);
                 break;
+            case "play_at":
+                console.log("Server is telling me to play at:", json.play_time);
+                var timeout = json.play_time - (new Date().getTime());
+                console.log("timeout:", timeout);
+                setTimeout(function() {
+                    console.log("Play!");
+                    play();
+                }, timeout);
+                break;
             case "pause":
                 pause();
                 break;
             case "getBufferedValue":
                 var bufferRatio = getBufferedValue();
                 sendBufferValue(bufferRatio);
+                break;
+            case "play_ping":
+                console.log("Got play_ping");
+                sendMessage("play_pong");
+                break;
+            case "pong":
+                PONGTIME = new Date().getTime();
+                console.log("Latency:", PONGTIME-PINGTIME, "ms.");
                 break;
             default:
                 console.log("Un-recognized Request", json.type);
@@ -111,8 +130,6 @@ function setTrack(url, trackTitle){
             // Set track URL
             player.src = sc_json.stream_url;
             trackHeading.innerHTML = sc_json.title +" by "+ sc_json.user.username;
-
-            setBufferRefresh();
         });
     }
 
@@ -257,12 +274,14 @@ function createServerMessage(type) {
 }
 
 function sendJSON(json_obj) {
+    json_obj.user_id = USER_ID;
+    json_obj.timestamp = new Date().getTime();
     console.log("### MESSAGE SENDING: ", JSON.stringify(json_obj));
     exampleSocket.send(JSON.stringify(json_obj));
 }
 
 function sendMessage(msg, extra, value) {
-    var obj = { "message" : msg };
+    var obj = { "message" : msg};
 
     // Add in extra parameters for things like seek or new track
     if (extra && value){ 
@@ -280,6 +299,15 @@ function parseSoundCloudLink (url){
             json_msg.stream_url += "?client_id=86e82361b4e6d0f88da0838793618a92";
             return json_msg;
         });
+}
+
+function heartbeat() {
+    console.log("heartbeat");
+    PINGTIME = new Date().getTime();
+    sendMessage("ping");
+    setTimeout(function() {
+        heartbeat();
+    }, 2000);
 }
 
 function setBufferRefresh(){
