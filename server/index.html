@@ -1,13 +1,45 @@
+<!DOCTYPE html>
 <html>
-<head>
-    <title>Hai2u</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-</head>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+        <title>BoomStream</title>
 
-<body>
-    <p>Connected as user #<span id="user_id"></span></p>
-    <button id="play">play</button>
-</body>
+        <link href="style.css" rel="stylesheet">
+        <!-- <script src="https://connect.soundcloud.com/sdk/sdk-3.0.0.js"/></script> -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+        <script src="script.js"></script>
+        <script src="progress_bar.js"></script>
 
-<script src="client.js"></script>
+    </head>
+
+    <body>
+        <h2>Connected as user #<span id="user_id"></span>.</h2>
+        <h2 id="track-title">No Track Yet</h2>
+        <audio id="player" preload="auto"> <!-- controls attribute also shows the seekbar -->
+            Your browser does not support the audio element.
+        </audio>
+        <div class="buffered">
+          <span id="buffered-amount"></span>
+        </div>
+        <div class="progress">
+          <span id="progress-amount"></span>
+        </div>
+
+        <button onclick="sendSynchronizedPlayRequest()">Play</button>
+        <button onclick="sendSynchronizedPauseRequest()">Pause</button>
+        <br>
+
+        <button onclick="playerStartTime()">playerStartTime</button>
+        <button onclick="playerEndingTime()">playerEndingTime</button>
+        <button onclick="setPlayerTime(15)">setPlayerTime</button>
+        <button onclick="getPlayerCurrentTime()">getPlayerCurrentTime</button>
+        <button onclick="getBufferedValue()">getBufferedValue</button>
+        <!-- <audio id="player" src="">Audio not supported</audio> -->
+        <br>
+
+        <button onclick="updateBufferVals()">updateBufferVals</button>
+
+        <h3 id="track-buffered">0.00</h1>
+    </body>
 </html>
