@@ -22,14 +22,7 @@ var wsServer = new WebSocketServer({server: server})
 
 // WebSocket server
 wsServer.on('request', function(request) {
-
-  
     var connection = request.accept(null, request.origin);
-
-    var id = setInterval(function() {
-        connection.send(JSON.stringify(new Date()), function() {  })
-    }, 1000)
-
 
     // This is the most important callback for us, we'll handle
     // all messages from users here.
