@@ -91,7 +91,8 @@ wsServer.on('request', function(request) {
                     PING_DICTIONARY[id].loopCount++;
                     PING_DICTIONARY[id].averagePing = newAverage / PING_DICTIONARY[id].loopCount;
 
-                    if (PING_DICTIONARY[id].loopCount < 3){
+                    // loop pings count
+                    if (PING_DICTIONARY[id].loopCount < 5){
                         // After resetting the markers restart the loop
                         PINGTIMES[id] = new Date().getTime();
                         sendMessage(CLIENTS[id], "play_ping");
