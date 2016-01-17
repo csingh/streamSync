@@ -113,7 +113,7 @@ wsServer.on('request', function(request) {
                 console.log("AVERAGE Latency for user", id, ":", PING_DICTIONARY[id].averagePing, "ms.");
 
                 //var difference = client_timestamp - (latency/2) - PLAY_MSG_RECEIVED_TIME;
-                var difference = client_timestamp - (parseInt(PING_DICTIONARY[id].averagePing/2)) - PLAY_MSG_RECEIVED_TIME;
+                var difference = client_timestamp - parseInt(PING_DICTIONARY[id].averagePing) - PLAY_MSG_RECEIVED_TIME;
 
                 console.log("Difference time: " + difference);
                 var client_play_time = PLAY_MSG_RECEIVED_TIME + PLAY_DELAY + difference;
