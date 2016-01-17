@@ -76,6 +76,8 @@ wsServer.on('request', function(request) {
                 console.log("Latency for user", id, ":", latency, "ms.");
 
                 var difference = client_timestamp - (latency / 2) - PLAY_MSG_RECEIVED_TIME;
+
+                console.log("Difference time: " + difference);
                 var client_play_time = PLAY_MSG_RECEIVED_TIME + PLAY_DELAY + difference;
 
                 sendJSON(CLIENTS[id], {
