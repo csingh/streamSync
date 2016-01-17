@@ -15,12 +15,8 @@ document.addEventListener('DOMContentLoaded', function() {
     trackHeading = document.getElementById('track-title');
     bufferView = document.getElementById("track-buffered");
 
-    // Once URL is received, set it as the player.src
-    //player.src="https://api.soundcloud.com/tracks/293/stream?client_id=86e82361b4e6d0f88da0838793618a92"
-    // player.src="https://api.soundcloud.com/tracks/53126096/stream?client_id=86e82361b4e6d0f88da0838793618a92"
-    // trackHeading.innerHTML = "Marijuana by Chrome Sparks";
     // After the player is ready and ws says play
-    playerReady = true;
+    // playerReady = true;
     //player.controls = true;
     //player.play();
 
@@ -97,16 +93,26 @@ function l(object){ console.log(object); }
 
 //***************** START::: Player control functions/API *****************
 function setTrack(url, trackTitle){
-    // Set track URL
-    player.src = url;
-
-    // Set Track name
-    if (trackTitle){ 
-        trackHeading.innerHTML = trackTitle; 
-
-    } else { 
-        trackHeading.innerHTML = "No track name provided..."; 
+    // Parse the SC URL
+    if (url){
+        return parseSoundCloudLink(url)
+        .then(function (sc_json){
+            // Set track URL
+            player.src = sc_json.stream_url;
+            trackHeading.innerHTML = sc_json.title +" by "+ sc_json.user.username;
+        });
     }
+
+    // // Set track URL
+    // player.src = url;
+
+    // // Set Track name
+    // if (trackTitle){ 
+    //     trackHeading.innerHTML = trackTitle; 
+
+    // } else { 
+    //     trackHeading.innerHTML = "No track name provided..."; 
+    // }
 }
 
 function play (){
@@ -191,7 +197,14 @@ function sendSynchronizedSeekRequest(seek){
     }
 }
 
-function sendNewTrackUrl(url){}
+function sendNewTrackUrl(url){
+    if (!url){
+        url = $('#new-song-url').val();
+    }
+    console.log("Sending SC Link: ", url);
+    sendMessage("newTrack", "streamURL", url);
+
+}
 
 function sendBufferValue(){}
 
@@ -226,6 +239,24 @@ function sendJSON(json_obj) {
     exampleSocket.send(JSON.stringify(json_obj));
 }
 
-function sendMessage(msg) {
-    sendJSON({"message" : msg});
+function sendMessage(msg, extra, value) {
+    var obj = { "message" : msg };
+
+    // Add in extra parameters for things like seek or new track
+    if (extra && value){ 
+        obj[extra] = value; 
+    }
+
+    sendJSON(obj);
 }
+
+// SOUNDCLOUD PARSING LOGIC
+function parseSoundCloudLink (url){
+    return SC.resolve(url)
+        .then(function (json_msg){ 
+            console.log("Link Resolved: ", json_msg);
+            json_msg.stream_url += "?client_id=86e82361b4e6d0f88da0838793618a92";
+            return json_msg;
+        });
+}
+
