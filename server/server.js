@@ -65,6 +65,11 @@ wsServer.on('request', function(request) {
                 for (var i = 0; i < CLIENTS.length; i++) {
                     sendMessage(CLIENTS[i], "pause");
                 }
+            } else if (json.message === 'seek') {
+                console.log("Broadcasting seek message to " + CLIENTS.length + " clients.");
+                for (var i = 0; i < CLIENTS.length; i++) {
+                    sendMessage(CLIENTS[i], "seek", "seek", json.seek);
+                }
             }
 
         }
@@ -79,9 +84,17 @@ wsServer.on('request', function(request) {
 // helpers
 
 function sendJSON(connection, json_obj) {
+    console.log("### MESSAGE SENDING: ", JSON.stringify(json_obj));
     connection.send(JSON.stringify(json_obj));
 }
 
-function sendMessage(connection, msg) {
-    sendJSON(connection, {"message" : msg});
+function sendMessage(connection, msg, extra, value) {
+    var obj = {"message" : msg};
+
+    // Add in extra parameters for things like seek or new track
+    if (extra && value){ 
+        obj[extra] = value; 
+    }
+
+    sendJSON(connection, obj);
 }
