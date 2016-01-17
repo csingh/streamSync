@@ -26,15 +26,31 @@ wsServer.on('request', function(request) {
         console.log("### PROCESS MESSAGE:", message);
         if (message.type === 'utf8') {
             // process WebSocket message
-            if (message.utf8Data === 'connected') {
+            try {
+                var json = JSON.parse(message.utf8Data);
+            } catch (e) {
+                console.log('This doesn\'t look like a valid JSON: ', message.data);
+                return;
+            }
+
+            console.log("Message JSON:", json);
+
+            if (json.message === 'connected') {
                 var id = CLIENTS.length;
-                connection.send(JSON.stringify({
+                sendJSON(connection, {
                     "id" : id,
                     "message" : "connection accepted"
-                }));
+                });
                 CLIENTS.push(connection);
-            } else if (message.utf8Data === 'ping') {
-                connection.sendUTF("pong")
+                console.log("Connection from user " + id + " accepted.");
+            } else if (json.message === 'ping') {
+                console.log("Ponging the ping.");
+                sendMessage(connection, "pong")
+            } else if (json.message === 'play') {
+                console.log("Broadcasting play message to " + CLIENTS.length + " clients.");
+                for (var i = 0; i < CLIENTS.length; i++) {
+                    sendMessage(CLIENTS[i], "playing");
+                }
             }
 
         }
@@ -45,3 +61,13 @@ wsServer.on('request', function(request) {
         console.log("### USER CONNECTION CLOSED.");
     });
 });
+
+// helpers
+
+function sendJSON(connection, json_obj) {
+    connection.send(JSON.stringify(json_obj));
+}
+
+function sendMessage(connection, msg) {
+    sendJSON(connection, {"message" : msg});
+}

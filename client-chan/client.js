@@ -1,3 +1,7 @@
+// attach event handlers
+$("#play").click(play);
+
+
 // if user is running mozilla then use it's built-in WebSocket
 window.WebSocket = window.WebSocket || window.MozWebSocket;
 
@@ -8,7 +12,7 @@ var USER_ID = -1;
 connection.onopen = function () {
     // connection is opened and ready to use
     console.log("### CONNECTION IS OPEN.");
-    connection.send("connected")
+    sendMessage("connected");
 };
 
 connection.onerror = function (error) {
@@ -33,10 +37,24 @@ connection.onmessage = function (message) {
 
 };
 
+// helpers
+
 function heartbeat() {
     console.log("heartbeat");
-    connection.send("ping");
+    sendMessage("ping");
     setTimeout(function() {
         heartbeat();
     }, 2000);
+}
+
+function sendJSON(json_obj) {
+    connection.send(JSON.stringify(json_obj));
+}
+
+function sendMessage(msg) {
+    sendJSON({"message" : msg});
+}
+
+function play() {
+    sendMessage("play");
 }
