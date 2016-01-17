@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 PONGTIME = new Date().getTime();
                 console.log("Latency:", PONGTIME-PINGTIME, "ms.");
                 break;
-            case "seekTime":
+            case "seektime":
                 sendCurrentSeekTime();
                 break;
             default:
