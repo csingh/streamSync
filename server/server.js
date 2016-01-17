@@ -1,16 +1,19 @@
 var WebSocketServer = require('websocket').server;
-var http = require('http');
+var http = require("http")
+var express = require("express")
+var app = express()
+var port = process.env.PORT || 5000
+
+// server static pages
+app.use(express.static(__dirname + "/"))
+
 
 var STREAM_URL = "https://api.soundcloud.com/tracks/53126096/stream?client_id=86e82361b4e6d0f88da0838793618a92";
 var CLIENTS = [];
 
-var server = http.createServer(function(request, response) {
-    // process HTTP request. Since we're writing just WebSockets server
-    // we don't have to implement anything.
-});
-server.listen(1337, function() {
-    console.log("### LISTENING ON PORT 1337.");
-});
+var server = http.createServer(app)
+server.listen(port)
+console.log("### LISTENING ON PORT " + port + ".");
 
 // create the server
 wsServer = new WebSocketServer({
