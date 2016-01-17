@@ -131,6 +131,7 @@ function setTrack(url, trackTitle){
 function play (offset){
     if (offset) player.currentTime += offset;
     player.play();
+    millisecondCounter();
 }
 
 function pause(){
@@ -221,6 +222,12 @@ function sendNewTrackUrl(url){
 
 }
 
+function sendFudgeFactorUpdate(){
+    var fudge = $('#fudge-input').val();
+    sendMessage("fudgeFactor", "fudgeFactor", fudge);
+    console.log("FudgeFactor value set: ", fudge);
+}
+
 function sendBufferValue(){}
 
 //***************** Server control functions/API *****************
@@ -281,5 +288,13 @@ function setBufferRefresh(){
         var bufferVal = updateBufferVals();
         if (bufferVal === 1) { clearInterval(bufRef); }
     }, 2000);
+
+}
+
+function millisecondCounter(){
+    var counterView = document.getElementById('player-current');
+    window.playerMSCounter = setInterval(function(){ 
+        counterView.innerHTML = String(player.currentTime);
+    }, 100);
 
 }

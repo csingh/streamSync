@@ -33,6 +33,13 @@
         <div class="progress">
           <span id="progress-amount"></span>
         </div>
+        <!-- $("#progress-amount").click(function(event){
+    console.log(event.offsetX);
+}); -->
+        <div class="position">
+            <span id="position-cursor">+</span>
+        </div>
+        <h3 id="player-current"></h3>
 
         <div class="synchronized-controls">
             <h3>Synchronized Controls</h3>
@@ -40,6 +47,9 @@
             <button onclick="sendSynchronizedPauseRequest()">Pause</button>
             <button onclick="sendSynchronizedSeekRequest()">Set Time</button>
             <input value="1" id="seek-input" type="number"></input>
+            <br>
+            <button onclick="sendFudgeFactorUpdate()">Fudge Factor</button>
+            <input value="1" id="fudge-input" type="number"></input>
         </div>
         <div>
             SoundCloud Url: <input type="text" name="url" id="new-song-url">
