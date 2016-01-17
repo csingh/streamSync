@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 setPlayerTime(json.seek);
                 break;
             case "play":
-                play();
+                play(json.offset);
                 break;
             case "play_at":
                 console.log("Server is telling me to play at:", json.play_time);
@@ -130,6 +130,8 @@ function setTrack(url, trackTitle){
             // Set track URL
             player.src = sc_json.stream_url;
             trackHeading.innerHTML = sc_json.title +" by "+ sc_json.user.username;
+
+            setBufferRefresh();
         });
     }
 
@@ -145,7 +147,8 @@ function setTrack(url, trackTitle){
     // }
 }
 
-function play (){
+function play (offset){
+    if (offset) player.currentTime += offset;
     player.play();
 }
 
@@ -200,6 +203,7 @@ function updateBufferVals(){
     var bufferVal = getBufferedValue();
     bufferView.innerHTML = String(bufferVal);
     console.log("Current buffer value: ", bufferVal);
+    return bufferVal;
 }
 // Buffer reference -- https://developer.mozilla.org/en-US/Apps/Build/Audio_and_video_delivery/buffering_seeking_time_ranges
 
@@ -301,3 +305,11 @@ function heartbeat() {
     }, 2000);
 }
 
+function setBufferRefresh(){
+
+    var bufRef = setInterval(function(){ 
+        var bufferVal = updateBufferVals();
+        if (bufferVal === 1) { clearInterval(bufRef); }
+    }, 2000);
+
+}
