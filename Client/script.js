@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', function() {
     playerReady = true;
     player.controls = true;
     //player.play();
+
+
 });
 
 function l(object){ console.log(object); }
@@ -24,10 +26,10 @@ function l(object){ console.log(object); }
 var playerReady = false;
 var trackHeading;
 var bufferView;
-
+var USER_ID = -1;
 
 // Setup connection with Webserver via websocket
-var exampleSocket = new WebSocket("ws://www.example.com/socketserver", "streamSync");
+var exampleSocket = new WebSocket('ws://127.0.0.1:1337');
 
 //Error HANDLERS
 exampleSocket.onerror = function (error){
@@ -44,14 +46,26 @@ exampleSocket.onclose = function (event){
 exampleSocket.onopen = function (event) {
   //exampleSocket.send("Here's some text that the server is urgently awaiting!"); 
   console.log("WebSocket Ready!");
+  sendMessage("connected");
 };
 
 // Once connection is setup wait for events to trigger
 exampleSocket.onmessage = function (event) {
     var data = event.data;
-    console.log("Message Received: ", event, data);
+    console.log("### MESSAGE RECEIVED: ", event, data);
 
-    switch(data.type){
+    try {
+        var json = JSON.parse(event.data);
+    } catch (e) {
+        console.log('This doesn\'t look like a valid JSON: ', event.data);
+        return;
+    }
+
+    switch(json.message){
+        case "connection accepted":
+            USER_ID = json.id;
+            $("#user_id").html(USER_ID);
+            break;
         case "newTrack":
             data.setTrack(data.streamURL);
             // Send confirmation back to server?
@@ -90,7 +104,8 @@ function setTrack(url){
 }
 
 function play (){
-    player.play();
+    sendMessage("play");
+    // player.play();
 }
 
 function pause(){
@@ -145,15 +160,6 @@ function updateBufferVals(){
 
 // Buffer reference -- https://developer.mozilla.org/en-US/Apps/Build/Audio_and_video_delivery/buffering_seeking_time_ranges
 
-
-var JSON = {
-    streamURL: "https://api.soundcloud.com/tracks/53126096/stream?client_id=86e82361b4e6d0f88da0838793618a92",
-    seek: "", // seek in seconds,
-    buffered: 0.13, // decimal value?
-    play: true,
-    pause: false
-}
-
 //***************** Server control functions/API *****************
 
 // Send requests
@@ -193,8 +199,10 @@ function createServerMessage(type) {
   //document.getElementById("text").value = "";
 }
 
-function sendMessage(msg){
-  // Send the msg object as a JSON-formatted string.
-  console.log("Sending message...", msg);
-  exampleSocket.send(JSON.stringify(msg));
+function sendJSON(json_obj) {
+    exampleSocket.send(JSON.stringify(json_obj));
+}
+
+function sendMessage(msg) {
+    sendJSON({"message" : msg});
 }

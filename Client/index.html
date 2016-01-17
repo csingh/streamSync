@@ -7,13 +7,15 @@
 
         <link href="style.css" rel="stylesheet">
         <!-- <script src="https://connect.soundcloud.com/sdk/sdk-3.0.0.js"/></script> -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
         <script src="script.js"></script>
         <script src="progress_bar.js"></script>
 
     </head>
 
     <body>
-        <h1 id="track-title">No Track Yet</h1>
+        <h1>Connected as user #<span id="user_id"></span>.</h1>
+        <h2 id="track-title">No Track Yet</h2>
         <audio id="player" preload="auto"> <!-- controls attribute also shows the seekbar -->
             Your browser does not support the audio element.
         </audio>
