@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // trackHeading.innerHTML = "Marijuana by Chrome Sparks";
     // After the player is ready and ws says play
     playerReady = true;
-    player.controls = true;
+    //player.controls = true;
     //player.play();
 
     // Setup connection with Webserver via websocket
@@ -128,7 +128,8 @@ function playerEndingTime(){
 }
 
 function setPlayerTime(seconds){
-    console.log( "setPlayerTime", player.currentTime = seconds );
+    console.log( "setPlayerTime", seconds );
+    player.currentTime = seconds;
     return player.currentTime = seconds; // Seek to 122 seconds
 }
 
@@ -180,7 +181,14 @@ function sendSynchronizedPauseRequest(){
 }
 
 function sendSynchronizedSeekRequest(seek){
-    sendJSON({ message: "seek", "seek": seek });
+    if (!seek){
+        // Get the seek time from id = seek-input
+        var seekInput = parseInt( $("#seek-input").val() );//.html(USER_ID);
+        if ( seekInput < playerEndingTime() ){
+            sendJSON({ message: "seek", "seek": seekInput });
+
+        } else { console.log("Value is longer than track length! ", seekInput); }
+    }
 }
 
 function sendNewTrackUrl(url){}
@@ -214,6 +222,7 @@ function createServerMessage(type) {
 }
 
 function sendJSON(json_obj) {
+    console.log("### MESSAGE SENDING: ", JSON.stringify(json_obj));
     exampleSocket.send(JSON.stringify(json_obj));
 }
 
