@@ -13,6 +13,7 @@ var CLIENTS = [];
 var PINGTIMES = [];
 var PLAY_MSG_RECEIVED_TIME = 0;
 var PLAY_DELAY = 5000;
+var PING_DICTIONARY = {};
 
 var server = http.createServer(app)
 server.listen(port)
@@ -56,6 +57,7 @@ wsServer.on('request', function(request) {
                 CLIENTS.push(connection);
                 PINGTIMES.push(0);
                 console.log("Connection from user " + id + " accepted.");
+
             } else if (json.message === 'ping') {
                 console.log("Ponging the ping.");
                 sendMessage(connection, "pong")
@@ -73,7 +75,7 @@ wsServer.on('request', function(request) {
                     for (var i = 0; i < CLIENTS.length; i++) {
                         sendMessage(CLIENTS[i], "seektime");
                     }
-                }, PLAY_DELAY * 2);
+                }, PLAY_DELAY * 3);
 
             } else if (json.message === 'play_pong') {
                 var id = json.user_id;
@@ -82,7 +84,33 @@ wsServer.on('request', function(request) {
                 var latency = now - PINGTIMES[id];
                 console.log("Latency for user", id, ":", latency, "ms.");
 
-                var difference = client_timestamp - (latency/2) - PLAY_MSG_RECEIVED_TIME;
+                // ACCUMULATE AN AVERAGE PING FOR 3 Values
+                // If entry exists, add accummulating average
+                if (PING_DICTIONARY[id]){
+                    var newAverage = latency + PING_DICTIONARY[id].averagePing * PING_DICTIONARY[id].loopCount;
+                    PING_DICTIONARY[id].loopCount++;
+                    PING_DICTIONARY[id].averagePing = newAverage / PING_DICTIONARY[id].loopCount;
+
+                    if (PING_DICTIONARY[id].loopCount < 3){
+                        // After resetting the markers restart the loop
+                        PINGTIMES[i] = new Date().getTime();
+                        sendMessage(CLIENTS[i], "play_ping");
+                        return;
+                    }
+                }
+
+                // If entry does not exist, initialize with first ping and send another ping loop
+                else {
+                    PING_DICTIONARY[id] = { averagePing: latency, loopCount: 1 };
+
+                    // After resetting the markers restart the loop
+                    PINGTIMES[i] = new Date().getTime();
+                    sendMessage(CLIENTS[i], "play_ping");
+                    return;
+                }
+
+                //var difference = client_timestamp - (latency/2) - PLAY_MSG_RECEIVED_TIME;
+                var difference = client_timestamp - (parseInt(PING_DICTIONARY[id].averagePing/2)) - PLAY_MSG_RECEIVED_TIME;
 
                 console.log("Difference time: " + difference);
                 var client_play_time = PLAY_MSG_RECEIVED_TIME + PLAY_DELAY + difference;
@@ -91,6 +119,8 @@ wsServer.on('request', function(request) {
                     "message" : "play_at",
                     "play_time" : client_play_time
                 });
+
+
             } else if (json.message === 'pause') {
                 console.log("Broadcasting pause message to " + CLIENTS.length + " clients.");
                 for (var i = 0; i < CLIENTS.length; i++) {
