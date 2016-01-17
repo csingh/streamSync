@@ -106,6 +106,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 PONGTIME = new Date().getTime();
                 console.log("Latency:", PONGTIME-PINGTIME, "ms.");
                 break;
+            case "seekTime":
+                sendCurrentSeekTime();
+                break;
             default:
                 console.log("Un-recognized Request", json.type);
                 break;
@@ -252,6 +255,11 @@ function sendFudgeFactorUpdate(){
 }
 
 function sendBufferValue(){}
+
+function sendCurrentSeekTime(){
+    sendMessage("seekTime", "seekTime", player.currentTime);
+    console.log("seekTime: "+player.currentTime);
+}
 
 //***************** Server control functions/API *****************
 
