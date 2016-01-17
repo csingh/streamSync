@@ -26,11 +26,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // access client either through heroku or through localhost:
     // heroku link: "https://whispering-journey-4483.herokuapp.com/"
     // local host links: "http://localhost:5000/" or "http://127.0.0.1:5000/"
-    var location = location.origin
-    if ("127".indexOf(substring) > -1 || "localhost".indexOf(substring) > -1  ){
+    var loc = location.origin
+    if (loc.indexOf("127") > -1 || loc.indexOf("localhost") > -1  ){
         exampleSocket = new WebSocket('ws://127.0.0.1:5000');
     } else {
-        var host = location.replace(/^http/, 'ws');
+        var host = loc.replace(/^http/, 'ws');
         exampleSocket = new WebSocket(host);
     }
 
