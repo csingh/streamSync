@@ -76,6 +76,8 @@ wsServer.on('request', function(request) {
                 console.log("Latency for user", id, ":", latency, "ms.");
 
                 var difference = client_timestamp - (latency / 2) - PLAY_MSG_RECEIVED_TIME;
+
+                console.log("Difference time: " + difference);
                 var client_play_time = PLAY_MSG_RECEIVED_TIME + PLAY_DELAY + difference;
 
                 sendJSON(CLIENTS[id], {
@@ -93,6 +95,8 @@ wsServer.on('request', function(request) {
                     sendMessage(CLIENTS[i], "seek", "seek", json.seek);
 
                 }
+            } else if (json.message === 'seektime') {
+                console.log("User", json.user_id, "seek time:", json.seektime);
             } else if (json.message === 'newTrack') {
                 console.log("Broadcasting newTrack message to " + CLIENTS.length + " clients.");
                 for (var i = 0; i < CLIENTS.length; i++) {
