@@ -64,11 +64,19 @@ wsServer.on('request', function(request) {
                 console.log("Broadcasting pause message to " + CLIENTS.length + " clients.");
                 for (var i = 0; i < CLIENTS.length; i++) {
                     sendMessage(CLIENTS[i], "pause");
+
                 }
             } else if (json.message === 'seek') {
                 console.log("Broadcasting seek message to " + CLIENTS.length + " clients.");
                 for (var i = 0; i < CLIENTS.length; i++) {
                     sendMessage(CLIENTS[i], "seek", "seek", json.seek);
+
+                }
+            } else if (json.message === 'newTrack') {
+                console.log("Broadcasting newTrack message to " + CLIENTS.length + " clients.");
+                for (var i = 0; i < CLIENTS.length; i++) {
+                    sendMessage(CLIENTS[i], "newTrack", "streamURL", json.streamURL);
+
                 }
             }
 
