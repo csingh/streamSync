@@ -130,8 +130,6 @@ function setTrack(url, trackTitle){
             // Set track URL
             player.src = sc_json.stream_url;
             trackHeading.innerHTML = sc_json.title +" by "+ sc_json.user.username;
-
-            setBufferRefresh();
         });
     }
 
