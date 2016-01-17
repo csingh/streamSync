@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // After the player is ready and ws says play
     // playerReady = true;
-    //player.controls = true;
+    player.controls = true;
     //player.play();
 
     // Setup connection with Webserver via websocket
