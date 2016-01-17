@@ -1,6 +1,7 @@
 var WebSocketServer = require('websocket').server;
 var http = require('http');
 
+var STREAM_URL = "https://api.soundcloud.com/tracks/53126096/stream?client_id=86e82361b4e6d0f88da0838793618a92";
 var CLIENTS = [];
 
 var server = http.createServer(function(request, response) {
@@ -41,6 +42,10 @@ wsServer.on('request', function(request) {
                     "id" : id,
                     "message" : "connection accepted"
                 });
+                sendJSON(connection, {
+                    "message" : "newTrack",
+                    "streamURL" : STREAM_URL
+                });
                 CLIENTS.push(connection);
                 console.log("Connection from user " + id + " accepted.");
             } else if (json.message === 'ping') {
@@ -49,7 +54,7 @@ wsServer.on('request', function(request) {
             } else if (json.message === 'play') {
                 console.log("Broadcasting play message to " + CLIENTS.length + " clients.");
                 for (var i = 0; i < CLIENTS.length; i++) {
-                    sendMessage(CLIENTS[i], "playing");
+                    sendMessage(CLIENTS[i], "play");
                 }
             }
 

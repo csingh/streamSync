@@ -1,3 +1,9 @@
+var playerReady = false;
+var trackHeading;
+var bufferView;
+var USER_ID = -1;
+var exampleSocket;
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log("DOM ready");
     // Save player object
@@ -11,84 +17,77 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Once URL is received, set it as the player.src
     //player.src="https://api.soundcloud.com/tracks/293/stream?client_id=86e82361b4e6d0f88da0838793618a92"
-    player.src="https://api.soundcloud.com/tracks/53126096/stream?client_id=86e82361b4e6d0f88da0838793618a92"
-    trackHeading.innerHTML = "Marijuana by Chrome Sparks";
+    // player.src="https://api.soundcloud.com/tracks/53126096/stream?client_id=86e82361b4e6d0f88da0838793618a92"
+    // trackHeading.innerHTML = "Marijuana by Chrome Sparks";
     // After the player is ready and ws says play
     playerReady = true;
     player.controls = true;
     //player.play();
 
+    // Setup connection with Webserver via websocket
+    exampleSocket = new WebSocket('ws://127.0.0.1:1337');
 
+    //Error HANDLERS
+    exampleSocket.onerror = function (error){
+        console.log("Error while establishing WS: ", error);
+    }
+
+    //Close HANDLERS
+    exampleSocket.onclose = function (event){
+        console.log("WS Closed ", event);
+        //alert("Connecton to Server Closed");
+    }
+
+    // Connection ready listener
+    exampleSocket.onopen = function (event) {
+      //exampleSocket.send("Here's some text that the server is urgently awaiting!"); 
+      console.log("WebSocket Ready!");
+      sendMessage("connected");
+    };
+
+    // Once connection is setup wait for events to trigger
+    exampleSocket.onmessage = function (event) {
+        var data = event.data;
+        console.log("### MESSAGE RECEIVED: ", event, data);
+
+        try {
+            var json = JSON.parse(event.data);
+        } catch (e) {
+            console.log('This doesn\'t look like a valid JSON: ', event.data);
+            return;
+        }
+
+        switch(json.message){
+            case "connection accepted":
+                USER_ID = json.id;
+                $("#user_id").html(USER_ID);
+                break;
+            case "newTrack":
+                setTrack(json.streamURL);
+                // Send confirmation back to server?
+                break;
+            case "seek":
+                setPlayerTime(json.seek);
+                break;
+            case "play":
+                play();
+                break;
+            case "pause":
+                pause();
+                break;
+            case "getBufferedValue":
+                var bufferRatio = getBufferedValue();
+                sendBufferValue(bufferRatio);
+                break;
+            default:
+                console.log("Un-recognized Request", json.type);
+                break;
+        }
+
+    }
 });
 
 function l(object){ console.log(object); }
-
-var playerReady = false;
-var trackHeading;
-var bufferView;
-var USER_ID = -1;
-
-// Setup connection with Webserver via websocket
-var exampleSocket = new WebSocket('ws://127.0.0.1:1337');
-
-//Error HANDLERS
-exampleSocket.onerror = function (error){
-    console.log("Error while establishing WS: ", error);
-}
-
-//Close HANDLERS
-exampleSocket.onclose = function (event){
-    console.log("WS Closed ", event);
-    //alert("Connecton to Server Closed");
-}
-
-// Connection ready listener
-exampleSocket.onopen = function (event) {
-  //exampleSocket.send("Here's some text that the server is urgently awaiting!"); 
-  console.log("WebSocket Ready!");
-  sendMessage("connected");
-};
-
-// Once connection is setup wait for events to trigger
-exampleSocket.onmessage = function (event) {
-    var data = event.data;
-    console.log("### MESSAGE RECEIVED: ", event, data);
-
-    try {
-        var json = JSON.parse(event.data);
-    } catch (e) {
-        console.log('This doesn\'t look like a valid JSON: ', event.data);
-        return;
-    }
-
-    switch(json.message){
-        case "connection accepted":
-            USER_ID = json.id;
-            $("#user_id").html(USER_ID);
-            break;
-        case "newTrack":
-            data.setTrack(data.streamURL);
-            // Send confirmation back to server?
-            break;
-        case "seek":
-            setPlayerTime(data.seek);
-            break;
-        case "play":
-            play();
-            break;
-        case "pause":
-            pause();
-            break;
-        case "getBufferedValue":
-            var bufferRatio = getBufferedValue();
-            sendBufferValue(bufferRatio);
-            break;
-        default:
-            console.log("Un-recognized Request", data.type);
-            break;
-    }
-
-}
     // streamURL: "https://api.soundcloud.com/tracks/53126096/stream?client_id=86e82361b4e6d0f88da0838793618a92",
     // seek: "", // seek in seconds,
     // buffered: 0.13, // decimal value?
@@ -104,8 +103,7 @@ function setTrack(url){
 }
 
 function play (){
-    sendMessage("play");
-    // player.play();
+    player.play();
 }
 
 function pause(){
@@ -163,9 +161,11 @@ function updateBufferVals(){
 //***************** Server control functions/API *****************
 
 // Send requests
-function sendSynchronizedPlayRequest(){}
+function sendSynchronizedPlayRequest() {
+    sendMessage("play");
+}
 
-function sendSynchronizedPlayRequest(){}
+function sendSynchronizedPauseRequest(){}
 
 function sendSynchronizedSeekRequest(){}
 
