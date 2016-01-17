@@ -5,7 +5,7 @@ var app = express()
 var port = process.env.PORT || 5000
 
 // server static pages
-app.use(express.static(__dirname + "/"))
+app.use(express.static(__dirname + "/client/"))
 
 
 var STREAM_URL = "https://api.soundcloud.com/tracks/53126096/stream?client_id=86e82361b4e6d0f88da0838793618a92";
