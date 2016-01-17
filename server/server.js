@@ -68,6 +68,13 @@ wsServer.on('request', function(request) {
                     PINGTIMES[i] = new Date().getTime();
                     sendMessage(CLIENTS[i], "play_ping");
                 }
+
+                setTimeout(function() {
+                    for (var i = 0; i < CLIENTS.length; i++) {
+                        sendMessage(CLIENTS[i], "seektime");
+                    }
+                }, PLAY_DELAY * 2);
+
             } else if (json.message === 'play_pong') {
                 var id = json.user_id;
                 var client_timestamp = json.timestamp;
