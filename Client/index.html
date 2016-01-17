@@ -4,21 +4,28 @@
         <meta charset="utf-8">
         <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
         <title>BoomStream</title>
+
+        <link href="style.css" rel="stylesheet">
         <!-- <script src="https://connect.soundcloud.com/sdk/sdk-3.0.0.js"/></script> -->
-        <script src="script.js">
-        // SC.initialize({
-        //   //client_id: 'YOUR_CLIENT_ID'
-        //   client_id: '86e82361b4e6d0f88da0838793618a92'
-        // });
-        </script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+        <script src="script.js"></script>
+        <script src="progress_bar.js"></script>
 
     </head>
 
     <body>
-        <h1 id="track-title">No Track Yet</h1>
+        <h1>Connected as user #<span id="user_id"></span>.</h1>
+        <h2 id="track-title">No Track Yet</h2>
         <audio id="player" preload="auto"> <!-- controls attribute also shows the seekbar -->
             Your browser does not support the audio element.
         </audio>
+        <div class="buffered">
+          <span id="buffered-amount"></span>
+        </div>
+        <div class="progress">
+          <span id="progress-amount"></span>
+        </div>
+
         <button onclick="play()">Play</button>
         <button onclick="pause()">Pause</button>
         <br>

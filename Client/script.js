@@ -15,7 +15,10 @@ document.addEventListener('DOMContentLoaded', function() {
     trackHeading.innerHTML = "Marijuana by Chrome Sparks";
     // After the player is ready and ws says play
     playerReady = true;
-    player.play();
+    player.controls = true;
+    //player.play();
+
+
 });
 
 function l(object){ console.log(object); }
@@ -23,10 +26,10 @@ function l(object){ console.log(object); }
 var playerReady = false;
 var trackHeading;
 var bufferView;
-
+var USER_ID = -1;
 
 // Setup connection with Webserver via websocket
-var exampleSocket = new WebSocket("ws://www.example.com/socketserver", "streamSync");
+var exampleSocket = new WebSocket('ws://127.0.0.1:1337');
 
 //Error HANDLERS
 exampleSocket.onerror = function (error){
@@ -43,19 +46,66 @@ exampleSocket.onclose = function (event){
 exampleSocket.onopen = function (event) {
   //exampleSocket.send("Here's some text that the server is urgently awaiting!"); 
   console.log("WebSocket Ready!");
+  sendMessage("connected");
 };
 
 // Once connection is setup wait for events to trigger
 exampleSocket.onmessage = function (event) {
-  console.log("Message Received: ", event.data);
+    var data = event.data;
+    console.log("### MESSAGE RECEIVED: ", event, data);
+
+    try {
+        var json = JSON.parse(event.data);
+    } catch (e) {
+        console.log('This doesn\'t look like a valid JSON: ', event.data);
+        return;
+    }
+
+    switch(json.message){
+        case "connection accepted":
+            USER_ID = json.id;
+            $("#user_id").html(USER_ID);
+            break;
+        case "newTrack":
+            data.setTrack(data.streamURL);
+            // Send confirmation back to server?
+            break;
+        case "seek":
+            setPlayerTime(data.seek);
+            break;
+        case "play":
+            play();
+            break;
+        case "pause":
+            pause();
+            break;
+        case "getBufferedValue":
+            var bufferRatio = getBufferedValue();
+            sendBufferValue(bufferRatio);
+            break;
+        default:
+            console.log("Un-recognized Request", data.type);
+            break;
+    }
+
 }
+    // streamURL: "https://api.soundcloud.com/tracks/53126096/stream?client_id=86e82361b4e6d0f88da0838793618a92",
+    // seek: "", // seek in seconds,
+    // buffered: 0.13, // decimal value?
+    // play: true,
+    // pause: false
 
 /// WEBSOCKET EVENT HANDLERS
 
 
 //***************** Player control functions/API *****************
+function setTrack(url){
+    player.src = url;
+}
+
 function play (){
-    player.play();
+    sendMessage("play");
+    // player.play();
 }
 
 function pause(){
@@ -78,8 +128,8 @@ function setPlayerTime(seconds){
 }
 
 function getPlayerCurrentTime(){
-    console.log( "getPlayerCurrentTime", player.played.end(0) );
-    return player.played.end(0);      // Returns the number of seconds the browser has played
+    console.log("getPlayerCurrentTime", player.currentTime);
+    return player.currentTime;  
 }
 
 function getBufferedValue(){
@@ -108,19 +158,26 @@ function updateBufferVals(){
     console.log("Current buffer value: ", bufferVal);
 }
 
+// Buffer reference -- https://developer.mozilla.org/en-US/Apps/Build/Audio_and_video_delivery/buffering_seeking_time_ranges
 
-var JSON = {
-    streamURL: "https://api.soundcloud.com/tracks/53126096/stream?client_id=86e82361b4e6d0f88da0838793618a92",
-    seek: "", // seek in seconds,
-    buffered: 0.13, // decimal value?
-    play: true,
-    pause: false
-}
+//***************** Server control functions/API *****************
 
+// Send requests
+function sendSynchronizedPlayRequest(){}
+
+function sendSynchronizedPlayRequest(){}
+
+function sendSynchronizedSeekRequest(){}
+
+function sendNewTrackUrl(url){}
+
+function sendBufferValue(){}
+
+//***************** Server control functions/API *****************
 
 
 // Send update message to server
-function sendText(type) {
+function createServerMessage(type) {
 
     switch(type){
         case "play":
@@ -137,10 +194,15 @@ function sendText(type) {
             console.log("sendText function received unhandled type: ", type); 
             return;
     }
-
-  // Send the msg object as a JSON-formatted string.
-  exampleSocket.send(JSON.stringify(msg));
   
   // Blank the text input element, ready to receive the next line of text from the user.
   //document.getElementById("text").value = "";
+}
+
+function sendJSON(json_obj) {
+    exampleSocket.send(JSON.stringify(json_obj));
+}
+
+function sendMessage(msg) {
+    sendJSON({"message" : msg});
 }
