@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Setup connection with Webserver via websocket
     var host = location.origin.replace(/^http/, 'ws')
-    var exampleSocket = new WebSocket(host);
+    exampleSocket = new WebSocket(host);
 
     //Error HANDLERS
     exampleSocket.onerror = function (error){
