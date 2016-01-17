@@ -52,6 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         try {
             var json = JSON.parse(event.data);
+
         } catch (e) {
             console.log('This doesn\'t look like a valid JSON: ', event.data);
             return;
@@ -63,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 $("#user_id").html(USER_ID);
                 break;
             case "newTrack":
-                setTrack(json.streamURL);
+                setTrack(json.streamURL, json.trackTitle);
                 // Send confirmation back to server?
                 break;
             case "seek":
@@ -94,12 +95,18 @@ function l(object){ console.log(object); }
     // play: true,
     // pause: false
 
-/// WEBSOCKET EVENT HANDLERS
-
-
-//***************** Player control functions/API *****************
-function setTrack(url){
+//***************** START::: Player control functions/API *****************
+function setTrack(url, trackTitle){
+    // Set track URL
     player.src = url;
+
+    // Set Track name
+    if (trackTitle){ 
+        trackHeading.innerHTML = trackTitle; 
+
+    } else { 
+        trackHeading.innerHTML = "No track name provided..."; 
+    }
 }
 
 function play (){
@@ -148,15 +155,18 @@ function getBufferedValue(){
     } else { return 0; } // Else return zer0
 
 }
-//***************** Player control functions/API *****************
+//***************** END::: Player control functions/API *****************
+
+
 
 function updateBufferVals(){
     var bufferVal = getBufferedValue();
     bufferView.innerHTML = String(bufferVal);
     console.log("Current buffer value: ", bufferVal);
 }
-
 // Buffer reference -- https://developer.mozilla.org/en-US/Apps/Build/Audio_and_video_delivery/buffering_seeking_time_ranges
+
+
 
 //***************** Server control functions/API *****************
 
@@ -165,9 +175,13 @@ function sendSynchronizedPlayRequest() {
     sendMessage("play");
 }
 
-function sendSynchronizedPauseRequest(){}
+function sendSynchronizedPauseRequest(){
+    sendMessage("pause");
+}
 
-function sendSynchronizedSeekRequest(){}
+function sendSynchronizedSeekRequest(seek){
+    sendJSON({ message: "seek", "seek": seek });
+}
 
 function sendNewTrackUrl(url){}
 
