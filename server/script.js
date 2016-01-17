@@ -25,7 +25,8 @@ document.addEventListener('DOMContentLoaded', function() {
     //player.play();
 
     // Setup connection with Webserver via websocket
-    exampleSocket = new WebSocket('ws://127.0.0.1:1337');
+    var host = location.origin.replace(/^http/, 'ws')
+    var exampleSocket = new WebSocket(host);
 
     //Error HANDLERS
     exampleSocket.onerror = function (error){
