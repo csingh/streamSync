@@ -194,6 +194,12 @@ function getBufferedValue(){
     } else { return 0; } // Else return zer0
 
 }
+
+function applyFudgeFactorUpdate(){
+    var fudge = parseInt($('#fudge-input').val())/1000;
+    player.currentTime += fudge;
+    console.log("FudgeFactor value set: ", fudge, player.currentTime);
+}
 //***************** END::: Player control functions/API *****************
 
 
