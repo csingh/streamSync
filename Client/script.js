@@ -48,8 +48,38 @@ exampleSocket.onopen = function (event) {
 
 // Once connection is setup wait for events to trigger
 exampleSocket.onmessage = function (event) {
-  console.log("Message Received: ", event.data);
+    var data = event.data;
+    console.log("Message Received: ", event, data);
+
+    switch(data.type){
+        case "newTrack":
+            data.setTrack(data.streamURL);
+            // Send confirmation back to server?
+            break;
+        case "seek":
+            setPlayerTime(data.seek);
+            break;
+        case "play":
+            play();
+            break;
+        case "pause":
+            pause();
+            break;
+        case "getBufferedValue":
+            var bufferRatio = getBufferedValue();
+            sendBufferValue(bufferRatio);
+            break;
+        default:
+            console.log("Un-recognized Request", data.type);
+            break;
+    }
+
 }
+    // streamURL: "https://api.soundcloud.com/tracks/53126096/stream?client_id=86e82361b4e6d0f88da0838793618a92",
+    // seek: "", // seek in seconds,
+    // buffered: 0.13, // decimal value?
+    // play: true,
+    // pause: false
 
 /// WEBSOCKET EVENT HANDLERS
 
@@ -134,6 +164,8 @@ function sendSynchronizedPlayRequest(){}
 function sendSynchronizedSeekRequest(){}
 
 function sendNewTrackUrl(url){}
+
+function sendBufferValue(){}
 
 //***************** Server control functions/API *****************
 
