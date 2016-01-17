@@ -19,8 +19,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // After the player is ready and ws says play
     // playerReady = true;
+    player.src = "smw_coin.mp3";
     player.controls = true;
-    //player.play();
+    player.play();
 
     // Setup connection with Webserver via websocket
 
