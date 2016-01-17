@@ -93,7 +93,7 @@ wsServer.on('request', function(request) {
 
                     if (PING_DICTIONARY[id].loopCount < 3){
                         // After resetting the markers restart the loop
-                        PINGTIMES[i] = new Date().getTime();
+                        PINGTIMES[id] = new Date().getTime();
                         sendMessage(CLIENTS[id], "play_ping");
                         return;
                     }
@@ -104,7 +104,7 @@ wsServer.on('request', function(request) {
                     PING_DICTIONARY[id] = { averagePing: latency, loopCount: 1 };
 
                     // After resetting the markers restart the loop
-                    PINGTIMES[i] = new Date().getTime();
+                    PINGTIMES[id] = new Date().getTime();
                     sendMessage(CLIENTS[id], "play_ping");
                     return;
                 }
