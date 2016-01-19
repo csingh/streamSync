@@ -9,11 +9,13 @@ app.use(express.static(__dirname + "/client/"))
 
 
 var STREAM_URL = "https://soundcloud.com/futureclassic/chrome-sparks-lookin-at-me-2";
+//var firstQueue = { streamURL: STREAM_URL };
 var CLIENTS = [];
 var PINGTIMES = [];
 var PLAY_MSG_RECEIVED_TIME = 0;
 var PLAY_DELAY = 5000;
 var PING_DICTIONARY = {};
+var TRACK_LIST = { /*head: firstQueue, tail: firstQueue*/ };
 
 var server = http.createServer(app)
 server.listen(port)
@@ -137,12 +139,29 @@ wsServer.on('request', function(request) {
                 }
             } else if (json.message === 'seektime') {
                 console.log("User", json.user_id, "seek time:", json.seektime);
+
             } else if (json.message === 'newTrack') {
                 console.log("Broadcasting newTrack message to " + CLIENTS.length + " clients.");
                 for (var i = 0; i < CLIENTS.length; i++) {
                     sendMessage(CLIENTS[i], "newTrack", "streamURL", json.streamURL);
 
                 }
+            } else if (json.message === 'queueTrack') {
+                TRACK_LIST.addToQueue(json.streamURL);
+                
+                console.log("Broadcasting queueTrack message to " + CLIENTS.length + " clients.");
+                for (var i = 0; i < CLIENTS.length; i++) {
+                    sendMessage(CLIENTS[i], "queueTrack", "streamURL", json.streamURL);
+
+                }
+            } else if (json.message === 'getQueue') {
+                var queue = TRACK_LIST.getQueue();
+                // console.log("Broadcasting getQueue message to " + CLIENTS.length + " clients.");
+                // for (var i = 0; i < CLIENTS.length; i++) {
+                //     
+
+                // }
+                sendMessage(CLIENTS[json.user_id], "getQueue", "queue", queue);
             }
 
         }
@@ -153,6 +172,44 @@ wsServer.on('request', function(request) {
         console.log("### USER CONNECTION CLOSED.");
     });
 });
+
+// initialize TRACK_LIST as a linked list
+TRACK_LIST.getCurrent = function(){ 
+    return TRACK_LIST.head; 
+}
+TRACK_LIST.getNext = function(){ 
+    // If next is undefined, head is undefined but tail still holds a reference
+    if (!TRACK_LIST.head.next){ 
+        TRACK_LIST.head.next = TRACK_LIST.tail = undefined; 
+    } else {
+        TRACK_LIST.head = TRACK.head.next; 
+    }
+    return TRACK_LIST.head; 
+}
+TRACK_LIST.addToQueue = function(newTrack){
+
+    var trackObj = { streamURL: newTrack };
+
+    if (TRACK_LIST.head){
+        // If queue is not empty
+        TRACK_LIST.tail.next = trackObj;
+        TRACK_LIST.tail = TRACK_LIST.tail.next;
+    } else {
+        // IF queue is empty head and tail will be same track
+        TRACK_LIST.head = TRACK_LIST.tail = trackObj
+    }
+}
+TRACK_LIST.getQueue = function(){ 
+    // Send an array with the remaining queue
+    var queue = [];
+    var currentTrack = TRACK_LIST.head;
+    while (currentTrack){
+        queue.push(TRACK_LIST.head.streamURL);
+        currentTrack = TRACK_LIST.head.next;
+    }
+
+    return queue;
+}
 
 // helpers
 
