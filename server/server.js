@@ -148,7 +148,8 @@ wsServer.on('request', function(request) {
                 }
             } else if (json.message === 'queueTrack') {
                 TRACK_LIST.addToQueue(json.streamURL);
-                
+                console.log(TRACK_LIST);
+
                 console.log("Broadcasting queueTrack message to " + CLIENTS.length + " clients.");
                 for (var i = 0; i < CLIENTS.length; i++) {
                     sendMessage(CLIENTS[i], "queueTrack", "streamURL", json.streamURL);
@@ -204,8 +205,8 @@ TRACK_LIST.getQueue = function(){
     var queue = [];
     var currentTrack = TRACK_LIST.head;
     while (currentTrack){
-        queue.push(TRACK_LIST.head.streamURL);
-        currentTrack = TRACK_LIST.head.next;
+        queue.push(currentTrack.streamURL);
+        currentTrack = currentTrack.next;
     }
 
     return queue;
