@@ -146,6 +146,7 @@ wsServer.on('request', function(request) {
                     sendMessage(CLIENTS[i], "newTrack", "streamURL", json.streamURL);
 
                 }
+
             } else if (json.message === 'queueTrack') {
                 TRACK_LIST.addToQueue(json.streamURL);
                 console.log(TRACK_LIST);
@@ -163,6 +164,15 @@ wsServer.on('request', function(request) {
 
                 // }
                 sendMessage(CLIENTS[json.user_id], "getQueue", "queue", queue);
+
+            } else if (json.message === 'nextTrack') {
+                console.log("nextTrack: ", TRACK_LIST.getNext(), " Remaining ", TRACK_LIST);
+
+                console.log("Broadcasting nextTrack message to " + CLIENTS.length + " clients.");
+                for (var i = 0; i < CLIENTS.length; i++) {
+                    sendMessage(CLIENTS[i], "nextTrack");
+
+                }
             }
 
         }
@@ -183,7 +193,7 @@ TRACK_LIST.getNext = function(){
     if (!TRACK_LIST.head.next){ 
         TRACK_LIST.head.next = TRACK_LIST.tail = undefined; 
     } else {
-        TRACK_LIST.head = TRACK.head.next; 
+        TRACK_LIST.head = TRACK_LIST.head.next; 
     }
     return TRACK_LIST.head; 
 }
@@ -191,7 +201,7 @@ TRACK_LIST.addToQueue = function(newTrack){
 
     var trackObj = { streamURL: newTrack };
 
-    if (TRACK_LIST.head){
+    if (TRACK_LIST.head !== undefined){
         // If queue is not empty
         TRACK_LIST.tail.next = trackObj;
         TRACK_LIST.tail = TRACK_LIST.tail.next;
@@ -211,6 +221,8 @@ TRACK_LIST.getQueue = function(){
 
     return queue;
 }
+
+console.log(TRACK_LIST);
 
 // helpers
 
