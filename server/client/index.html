@@ -5,9 +5,8 @@
         <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
         <title>BoomStream</title>
 
-        <link href="style.css" rel="stylesheet">
-        <!-- <script src="https://connect.soundcloud.com/sdk/sdk-3.0.0.js"/></script> -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+
         <script src="script.js"></script>
         <script src="progress_bar.js"></script>
 
@@ -19,29 +18,49 @@
         });
         </script>
 
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+        <link href="style.css" rel="stylesheet">
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
     </head>
-
     <body>
-        <h2>Connected as user #<span id="user_id"></span>.</h2>
-        <h2 id="track-title">No Track Yet</h2>
-        <audio id="player" preload="auto"> <!-- controls attribute also shows the seekbar -->
-            Your browser does not support the audio element.
-        </audio>
-        <div class="buffered">
-          <span id="buffered-amount"></span>
-        </div>
-        <div class="progress">
-          <span id="progress-amount"></span>
-        </div>
-        <!-- $("#progress-amount").click(function(event){
-    console.log(event.offsetX);
-}); -->
-        <div class="position">
-            <span id="position-cursor">+</span>
-        </div>
-        <h3 id="player-current"></h3>
 
-        <div class="synchronized-controls">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8">
+                    <p>Connected as user #<span id="user_id"></span></p>
+                    <h3 id="track-title">No Track Yet</h3>
+                    <audio id="player" preload="auto"> <!-- controls attribute also shows the seekbar -->
+                        Your browser does not support the audio element.
+                    </audio>
+                    <div class="buffered">
+                      <span id="buffered-amount"></span>
+                    </div>
+                    <div class="progress">
+                      <span id="progress-amount"></span>
+                    </div>
+                    <div class="position">
+                        <span id="position-cursor">+</span>
+                    </div>
+                    <h3 id="player-current"></h3>
+                </div>
+                <div class="col-md-4">
+                    <h3 id="playlist-title">Playlist Queue</h3>
+                    <ul class="playlist">
+                        <li>Eh</li>
+                        <li>Ba</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container synchronized-controls">
             <h3>Synchronized Controls</h3>
             <button onclick="sendSynchronizedPlayRequest()">Play</button>
             <button onclick="sendSynchronizedPauseRequest()">Pause</button>
@@ -50,14 +69,13 @@
             <br>
             <button onclick="applyFudgeFactorUpdate()">Fudge Factor</button>
             <input value="1" id="fudge-input" type="number"></input>
-        </div>
-        <div>
+
             SoundCloud Url: <input type="text" name="url" id="new-song-url">
             <!-- <button onclick="sendNewTrackUrl()">New Song</button> -->
             <button onclick="queueNewTrackUrl()">Queue Song</button>
         </div>
 
-        <div class="local-buttons">
+        <div class="container local-buttons">
             <h3>Debug Controls</h3>
             <button onclick="playerStartTime()">playerStartTime</button>
             <button onclick="playerEndingTime()">playerEndingTime</button>
@@ -67,8 +85,10 @@
         <!-- <audio id="player" src="">Audio not supported</audio> -->
         </div>
 
-        <button onclick="updateBufferVals()">updateBufferVals</button>
+        <div class="container">
+            <button onclick="updateBufferVals()">updateBufferVals</button>
+            <h3 id="track-buffered">0.00</h1>
+        </div>
 
-        <h3 id="track-buffered">0.00</h1>
     </body>
 </html>
