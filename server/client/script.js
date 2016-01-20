@@ -113,6 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 break;
             case "getQueue":
                 console.log("getQueue", json);
+                digestQueueStream(json.queue);
                 break;
             case "nextTrack":
                 playNextTrack();
@@ -268,6 +269,27 @@ function applyFudgeFactorUpdate(){
 //***************** END::: Player control functions/API *****************
 
 // Queue Manipulation //
+function digestQueueStream(streamList){
+    // Loop through all the links and retrive the SC information
+    var promises = [];
+    for (i = 0; i < streamList.length; i++){
+        promises.push(parseSoundCloudLink(streamList[i]));
+    }
+    // Add a promise all condition to make sure the tracks are added in order
+    SC.Promise.all(promises).then(function(){
+        // arguments is JS keyword for a function args, the [0] is because this is a nested function?
+        console.log(arguments[0]);
+        var args = arguments[0];
+        for (i = 0; i < args.length; i++){
+            // Update queue with retrived information and update views
+            TRACK_LIST.addToQueue({ streamLink: args[i].stream_url, title: args[i].title, artist: args[i].user.username, albumart: args[i].artwork_url});
+            addToQueueView(args[i].title);
+        }
+        // Return argument to continue chain if needed
+        return args;
+    });
+}
+
 function addToQueueData(trackObj){
     // Parse the SC URL
     if (trackObj.streamURL){
