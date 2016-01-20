@@ -5,6 +5,7 @@ var USER_ID = -1;
 var exampleSocket;
 var PINGTIME = 0;
 var PONGTIME = 0;
+var PLAYLIST = [];
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log("DOM ready");
