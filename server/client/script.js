@@ -23,9 +23,6 @@ document.addEventListener('DOMContentLoaded', function() {
     player.controls = true;
     player.play();
 
-    // Setup connection with Webserver via websocket
-
-
     // access client either through heroku or through localhost:
     // heroku link: "https://whispering-journey-4483.herokuapp.com/"
     // local host links: "http://localhost:5000/" or "http://127.0.0.1:5000/"
@@ -70,8 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         switch(json.message){
             case "connection accepted":
-                USER_ID = json.id;
-                $("#user_id").html(USER_ID);
+                setUserDetails(json.id);
                 break;
             case "newTrack":
                 setTrack(json.streamURL, json.trackTitle);
@@ -130,6 +126,42 @@ function l(object){ console.log(object); }
     // buffered: 0.13, // decimal value?
     // play: true,
     // pause: false
+
+// VIEW Manipulations //
+
+function setUserDetails(user_id, username){
+    if (!username){
+        $("#user_id").html(user_id);
+    } else {
+        $("#user_id").html(username);
+    }
+}
+
+function addToQueueView(track_title){
+    console.log("addToQueueView",track_title);
+    if (!track_title) return;
+
+    var playlist = $('#playlist');
+
+    // Append element to playlist
+    var row = document.createElement("TR");
+    var col = document.createElement("TD");
+    var text = document.createTextNode(track_title);
+    col.appendChild(text);
+    row.appendChild(col);
+    playlist.append(row); // jQuery object method
+    
+}
+
+function removeTopQueueItem(){
+    var playlist = $('#playlist');
+    // Remove first element in the list for when the track is done
+    playlist.find('tr:first').remove();
+}
+
+
+
+// END VIEW Manipulations //
 
 //***************** START::: Player control functions/API *****************
 function setTrack(url, trackTitle){
@@ -282,7 +314,6 @@ function sendCurrentSeekTime(){
 }
 
 //***************** Server control functions/API *****************
-
 
 // Send update message to server
 function createServerMessage(type) {
