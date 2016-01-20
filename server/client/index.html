@@ -53,10 +53,12 @@
         </div>
         <div>
             SoundCloud Url: <input type="text" name="url" id="new-song-url">
-            <button onclick="sendNewTrackUrl()">New Song</button>
+            <!-- <button onclick="sendNewTrackUrl()">New Song</button> -->
+            <button onclick="queueNewTrackUrl()">Queue Song</button>
         </div>
 
         <div class="local-buttons">
+            <h3>Debug Controls</h3>
             <button onclick="playerStartTime()">playerStartTime</button>
             <button onclick="playerEndingTime()">playerEndingTime</button>
             <button onclick="setPlayerTime(15)">setPlayerTime</button>

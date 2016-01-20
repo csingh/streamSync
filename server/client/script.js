@@ -110,6 +110,12 @@ document.addEventListener('DOMContentLoaded', function() {
             case "seektime":
                 sendCurrentSeekTime();
                 break;
+            case "queueTrack":
+                console.log("queueTrack", json);
+                break;
+            case "getQueue":
+                console.log("getQueue", json);
+                break;
             default:
                 console.log("Un-recognized Request", json.type);
                 break;
@@ -247,6 +253,19 @@ function sendNewTrackUrl(url){
     console.log("Sending SC Link: ", url);
     sendMessage("newTrack", "streamURL", url);
 
+}
+
+function queueNewTrackUrl(url){
+    if (!url){
+        url = $('#new-song-url').val();
+    }
+    console.log("Sending SC Link: ", url);
+    sendMessage("queueTrack", "streamURL", url);
+
+}
+
+function getSongQueue(){
+    sendMessage("getQueue");
 }
 
 function sendFudgeFactorUpdate(){
