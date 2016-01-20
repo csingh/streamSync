@@ -5,7 +5,7 @@ var USER_ID = -1;
 var exampleSocket;
 var PINGTIME = 0;
 var PONGTIME = 0;
-var PLAYLIST = [];
+var TRACK_LIST = {};
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log("DOM ready");
@@ -108,10 +108,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 sendCurrentSeekTime();
                 break;
             case "queueTrack":
-                console.log("queueTrack", json);
+                // console.log("queueTrack", json);
+                addToQueueData(json);
                 break;
             case "getQueue":
                 console.log("getQueue", json);
+                break;
+            case "nextTrack":
+                playNextTrack();
                 break;
             default:
                 console.log("Un-recognized Request", json.type);
@@ -131,6 +135,7 @@ function l(object){ console.log(object); }
 // VIEW Manipulations //
 
 function setUserDetails(user_id, username){
+    USER_ID = user_id
     if (!username){
         $("#user_id").html(user_id);
     } else {
@@ -165,8 +170,6 @@ function removeTopQueueItem(){
     playlist.find('tr:first').remove();
 }
 
-
-
 // END VIEW Manipulations //
 
 //***************** START::: Player control functions/API *****************
@@ -177,23 +180,13 @@ function setTrack(url, trackTitle){
         .then(function (sc_json){
             // Set track URL
             player.src = sc_json.stream_url;
+            player.currentTime = 0;
             // update view
             updatePlayerTrackDetails(sc_json.title, sc_json.artwork_url, sc_json.user.username);
 
             return sc_json;
         });
     }
-
-    // // Set track URL
-    // player.src = url;
-
-    // // Set Track name
-    // if (trackTitle){ 
-    //     trackHeading.innerHTML = trackTitle; 
-
-    // } else { 
-    //     trackHeading.innerHTML = "No track name provided..."; 
-    // }
 }
 
 function play (offset){
@@ -204,6 +197,21 @@ function play (offset){
 
 function pause(){
     player.pause();
+}
+
+function playNextTrack(offset){
+    // Get next track
+    var trackObj = TRACK_LIST.getNext();
+    if (trackObj){
+        console.log(trackObj);
+        // Play next track
+        player.src = trackObj.streamLink;
+        // Update player view
+        updatePlayerTrackDetails(trackObj.title, trackObj.artwork_url, trackObj.artist);
+        // Update queue view
+        removeTopQueueItem();
+
+    } else { console.log("Queue is empty!"); }
 }
 
 function playerStartTime(){
@@ -253,7 +261,22 @@ function applyFudgeFactorUpdate(){
 }
 //***************** END::: Player control functions/API *****************
 
+// Queue Manipulation //
+function addToQueueData(trackObj){
+    // Parse the SC URL
+    if (trackObj.streamURL){
+        return parseSoundCloudLink(trackObj.streamURL)
+        .then(function (sc_json){
+            
+            TRACK_LIST.addToQueue({ streamLink: sc_json.stream_url, title: sc_json.title, artist: sc_json.user.username, albumart: sc_json.artwork_url});
+            addToQueueView(sc_json.title);
+            return sc_json;
+        
+        });
+    } else { alert("STREAM URL from Server is MISSING"); }
+}
 
+// END Queue Manip //
 
 function updateBufferVals(){
     var bufferVal = getBufferedValue();
@@ -373,6 +396,39 @@ function parseSoundCloudLink (url){
             json_msg.stream_url += "?client_id=86e82361b4e6d0f88da0838793618a92";
             return json_msg;
         });
+}
+
+// PLAYLIST OBJ STRUCT
+// initialize it as a linked list
+TRACK_LIST.getCurrent = function(){ 
+    return TRACK_LIST.head; 
+}
+TRACK_LIST.getNext = function(){ 
+    // If next is undefined, head is undefined but tail still holds a reference
+    if (!TRACK_LIST.head){
+        console.log("The queue is empty!", this);
+        return;
+
+    } else if (!TRACK_LIST.head.next){ 
+        var track = TRACK_LIST.head;
+        TRACK_LIST.head = undefined;
+        TRACK_LIST.tail = undefined;
+        return track;
+    } else {
+        TRACK_LIST.head = TRACK_LIST.head.next;
+    return TRACK_LIST.head; 
+    }
+}
+TRACK_LIST.addToQueue = function(trackObj){
+
+    if (TRACK_LIST.head){
+        // If queue is not empty
+        TRACK_LIST.tail.next = trackObj;
+        TRACK_LIST.tail = TRACK_LIST.tail.next;
+    } else {
+        // IF queue is empty head and tail will be same track
+        TRACK_LIST.head = TRACK_LIST.tail = trackObj
+    }
 }
 
 function heartbeat() {
