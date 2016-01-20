@@ -189,25 +189,34 @@ TRACK_LIST.getCurrent = function(){
     return TRACK_LIST.head; 
 }
 TRACK_LIST.getNext = function(){ 
-    // If next is undefined, head is undefined but tail still holds a reference
-    if (!TRACK_LIST.head.next){ 
-        TRACK_LIST.head.next = TRACK_LIST.tail = undefined; 
+    if (!TRACK_LIST.head){
+    // If head is undefined return undefined
+        // Stops firing of other conditions
+        // return TRACK_LIST.head;
+
+    } else if (!TRACK_LIST.head.next){ 
+    // If next is undefined, then new head is undefined but tail would still hold a reference
+        TRACK_LIST.head.next = undefined;
+        TRACK_LIST.tail = undefined; 
     } else {
+        // Otherwise new head is next in line
         TRACK_LIST.head = TRACK_LIST.head.next; 
     }
     return TRACK_LIST.head; 
 }
 TRACK_LIST.addToQueue = function(newTrack){
 
-    var trackObj = { streamURL: newTrack };
+    var trackObj = { id: TRACK_LIST.trackingID, streamURL: newTrack };
+    TRACK_LIST.trackingID++;
 
     if (TRACK_LIST.head !== undefined){
-        // If queue is not empty
+        // If queue is not empty then add object to the end of the tail
         TRACK_LIST.tail.next = trackObj;
-        TRACK_LIST.tail = TRACK_LIST.tail.next;
+        TRACK_LIST.tail = trackObj; //TRACK_LIST.tail.next;
     } else {
         // IF queue is empty head and tail will be same track
-        TRACK_LIST.head = TRACK_LIST.tail = trackObj
+        TRACK_LIST.head = trackObj;
+        TRACK_LIST.tail = trackObj;
     }
 }
 TRACK_LIST.getQueue = function(){ 
@@ -221,8 +230,9 @@ TRACK_LIST.getQueue = function(){
 
     return queue;
 }
+TRACK_LIST.trackingID = 0;
 
-console.log(TRACK_LIST);
+//console.log(TRACK_LIST);
 
 // helpers
 
