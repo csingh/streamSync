@@ -193,6 +193,12 @@ function play (offset){
     if (offset) player.currentTime += offset;
     player.play();
     millisecondCounter();
+
+    // Set the track ended listener
+    player.onended = function() {
+        console.log("The track has ended");
+        sendSynchronizedNextSongRequest();
+    };
 }
 
 function pause(){
@@ -207,7 +213,7 @@ function playNextTrack(offset){
         // Play next track
         player.src = trackObj.streamLink;
         // Update player view
-        updatePlayerTrackDetails(trackObj.title, trackObj.artwork_url, trackObj.artist);
+        updatePlayerTrackDetails(trackObj.title, trackObj.albumart, trackObj.artist);
         // Update queue view
         removeTopQueueItem();
 
@@ -273,7 +279,7 @@ function addToQueueData(trackObj){
             return sc_json;
         
         });
-    } else { alert("STREAM URL from Server is MISSING"); }
+    } else { console.log(trackObj); alert("STREAM URL from Server is MISSING"); }
 }
 
 // END Queue Manip //
@@ -314,7 +320,7 @@ function sendNewTrackUrl(url){
     if (!url){
         url = $('#new-song-url').val();
     }
-    console.log("Sending SC Link: ", url);
+    // console.log("Sending SC Link: ", url);
     sendMessage("newTrack", "streamURL", url);
 
 }
@@ -330,6 +336,10 @@ function queueNewTrackUrl(url){
 
 function getSongQueue(){
     sendMessage("getQueue");
+}
+
+function sendSynchronizedNextSongRequest(){
+    sendMessage("nextTrack");
 }
 
 function sendFudgeFactorUpdate(){
