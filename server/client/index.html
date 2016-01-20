@@ -5,6 +5,7 @@
         <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
         <title>BoomStream</title>
 
+        <!-- jQuery -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 
         <script src="script.js"></script>
@@ -18,22 +19,22 @@
         });
         </script>
 
-        <!-- Latest compiled and minified CSS -->
+        <!-- Bootstrap and FontAwesome CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-
-        <!-- Optional theme -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
         <link href="style.css" rel="stylesheet">
-        <!-- Latest compiled and minified JavaScript -->
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
     </head>
     <body>
+        <div class="container" style="margin-top: 50px;">
+            <h1>BoomStream</h1>
+        </div>
 
-        <div class="container">
+        <div class="container" style="background-color: #B39DDB;">
             <div class="row">
-                <div class="col-md-8">
+                <div class="col-md-8" style="background-color: #3F51B5;">
+
                     <p>Connected as user #<span id="user_id"></span></p>
                     <h3 id="track-title">No Track Yet</h3>
                     <audio id="player" preload="auto"> <!-- controls attribute also shows the seekbar -->
@@ -46,48 +47,56 @@
                       <span id="progress-amount"></span>
                     </div>
                     <div class="position">
-                        <span id="position-cursor">+</span>
+                        <span id="position-cursor" class="fa fa-caret-right"></span>
                     </div>
                     <h3 id="player-current"></h3>
+
+                    <div class="synchronized-controls">
+
+                        <i class="btn btn-default fa fa-play" onclick="sendSynchronizedPlayRequest()"></i>
+                        <i class="btn btn-default fa fa-pause" onclick="sendSynchronizedPauseRequest()"></i>
+                        <i class="btn btn-default fa fa-stop" disabled="disabled" onclick="sendSynchronizedStopRequest()"></i>
+                        <i class="btn btn-default fa fa-step-forward" disabled="disabled" onclick="sendSynchronizedNextRequest()"></i>
+                        <i class="btn btn-default fa fa-clock-o" onclick="sendSynchronizedSeekRequest()"> Set</i>
+                        <input value="1" id="seek-input" type="number" style="width:35px;"></input>
+                        <h3>Synchronized Controls</h3>
+                        <!-- <i class="btn btn-default fa fa-clock-o" onclick="sendSynchronizedSeekRequest()">Set Time</i> -->
+                        <!-- <button onclick="applyFudgeFactorUpdate()">Fudge Factor</button> -->
+                        <!-- <input value="1" id="fudge-input" type="number"></input> -->
+
+                    </div>
+
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4" style="padding-top: 10px; margin-bottom: 25px;">
+
                     <h3 id="playlist-title">Playlist Queue</h3>
-                    <ul class="playlist">
-                        <li>Eh</li>
-                        <li>Ba</li>
+                    <ul class="list-unstyled playlist">
+                        <li>Eh by Julius Caesar</li>
+                        <li>Ba by BabyBell</li>
                     </ul>
+
+                    <div class="form-inline">
+                        <input type="text" class="form-control" name="url" id="new-song-url" placeholder="http://soundcloud.com">
+                        <!-- <button onclick="sendNewTrackUrl()">New Song</button> -->
+                        <button class="btn btn-primary" onclick="queueNewTrackUrl()">Queue ></button>
+                    </div>
+
                 </div>
             </div>
         </div>
 
-        <div class="container synchronized-controls">
-            <h3>Synchronized Controls</h3>
-            <button onclick="sendSynchronizedPlayRequest()">Play</button>
-            <button onclick="sendSynchronizedPauseRequest()">Pause</button>
-            <button onclick="sendSynchronizedSeekRequest()">Set Time</button>
-            <input value="1" id="seek-input" type="number"></input>
-            <br>
-            <button onclick="applyFudgeFactorUpdate()">Fudge Factor</button>
-            <input value="1" id="fudge-input" type="number"></input>
-
-            SoundCloud Url: <input type="text" name="url" id="new-song-url">
-            <!-- <button onclick="sendNewTrackUrl()">New Song</button> -->
-            <button onclick="queueNewTrackUrl()">Queue Song</button>
-        </div>
-
         <div class="container local-buttons">
             <h3>Debug Controls</h3>
-            <button onclick="playerStartTime()">playerStartTime</button>
-            <button onclick="playerEndingTime()">playerEndingTime</button>
-            <button onclick="setPlayerTime(15)">setPlayerTime</button>
-            <button onclick="getPlayerCurrentTime()">getPlayerCurrentTime</button>
-            <button onclick="getBufferedValue()">getBufferedValue</button>
-        <!-- <audio id="player" src="">Audio not supported</audio> -->
+            <button class="btn btn-default" onclick="playerStartTime()">playerStartTime</button>
+            <button class="btn btn-default" onclick="playerEndingTime()">playerEndingTime</button>
+            <button class="btn btn-default" onclick="setPlayerTime(15)">setPlayerTime</button>
+            <button class="btn btn-default" onclick="getPlayerCurrentTime()">getPlayerCurrentTime</button>
+            <button class="btn btn-default" onclick="getBufferedValue()">getBufferedValue</button>
         </div>
 
-        <div class="container">
-            <button onclick="updateBufferVals()">updateBufferVals</button>
-            <h3 id="track-buffered">0.00</h1>
+        <div class="container" style="padding: 10px;">
+            <button class="btn btn-default" onclick="updateBufferVals()">updateBufferVals</button>
+            <h3 id="track-buffered">0.00</h3>
         </div>
 
     </body>

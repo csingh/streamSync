@@ -52,13 +52,17 @@
   margin-left: -5px;
   padding-left: 0px;
   border: 0px;
-  color: red;
+  color: white;
 }
 
 .synchronized-controls {
-  margin-top: 15px; 
-  border: 1px solid black;
-  padding: 10px;
+  padding-bottom: 25px; 
+  /*border: 1px solid black;*/
+  /*padding: 10px;*/
+}
+
+.container {
+  background-color: #424242;
 }
 
 /*button {
@@ -70,7 +74,13 @@ input {
 }*/
 
 .local-buttons {
-  margin-top: 15px; 
-  border: 1px solid black;
+  /*margin-top: 15px;*/
+  /*border: 1px solid black;*/
   padding: 10px;
+  padding-top: 10px;
+}
+
+body {
+   color: #FFF;
+   background-color: #E0E0E0;
 }
