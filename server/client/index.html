@@ -57,7 +57,7 @@
                         <i class="btn btn-default fa fa-play" onclick="sendSynchronizedPlayRequest()"></i>
                         <i class="btn btn-default fa fa-pause" onclick="sendSynchronizedPauseRequest()"></i>
                         <i class="btn btn-default fa fa-stop" disabled="disabled" onclick="sendSynchronizedStopRequest()"></i>
-                        <i class="btn btn-default fa fa-step-forward" disabled="disabled" onclick="sendSynchronizedNextRequest()"></i>
+                        <i class="btn btn-default fa fa-step-forward" onclick="sendSynchronizedNextSongRequest()"></i>
                         <i class="btn btn-default fa fa-clock-o" onclick="sendSynchronizedSeekRequest()"> Set</i>
                         <input value="1" id="seek-input" type="number" style="width:35px;"></input>
                         <h3>Synchronized Controls</h3>
@@ -72,28 +72,29 @@
                     <p style="text-align: center;">♫ ♬ ♪ ♩ ♪</p>
                     <h3 id="playlist-title">Playlist Queue</h3>
                     <!-- <ul class="list-unstyled playlist"> -->
-                    <table class="table table-striped" id="playlist">
-                        <!-- <li>Eh by Julius Caesar</li> -->
-                        <!-- <li>Ba by BabyBell</li> -->
-                        <tr>
-                            <td class="track-title">Add some tracks!</td>
-                        </tr>
+                    <table class="table table-striped" id="_playlist">
+                        <tbody id="playlist"></tbody>
                     </table>
 
                 </div>
             </div>
         </div>
 
-        <div class="container queue-container">
+        <!-- <div class="container queue-container">
             <div container="row">
                 <div class="col form-inline">
                     <input type="text" class="form-control" name="url" id="new-song-url" placeholder="http://soundcloud.com">
-                    <!-- <button onclick="sendNewTrackUrl()">New Song</button> -->
                     <button class="btn btn-default" onclick="queueNewTrackUrl()">Queue ></button>
                 </div>
             </div>
-        </div>
+        </div> -->
 
+        <div class="container queue-container">
+            <div class="col-md-10" style="padding-left: 0px;">
+              <input type="email" class="col-md-10 form-control" id="new-song-url" placeholder="Email">
+            </div>
+            <button class="btn btn-default col-md-2" onclick="queueNewTrackUrl()">Add Track</button>
+        </div>
 <!--         <div class="container local-buttons">
             <h3>Debug Controls</h3>
             <button class="btn btn-default" onclick="playerStartTime()">playerStartTime</button>

@@ -55,6 +55,10 @@
   color: white;
 }
 
+#albumart {
+  margin-bottom: 10px;
+}
+
 .synchronized-controls {
   padding-bottom: 25px; 
   /*border: 1px solid black;*/
@@ -73,26 +77,43 @@ input {
   height: 25px;
 }*/
 
-.local-buttons {
+.local-buttons, .local-buttons > h3 {
   /*margin-top: 15px;*/
   /*border: 1px solid black;*/
   padding: 10px;
   padding-top: 10px;
+  color: #FFF;
 }
 
 body {
-   color: #FFF;
-   background-color: #E0E0E0;
+   color: #000;
+   /*background-color: #E0E0E0;*/
+   background-color: #424242;
 }
 
-.title-container {
+.title-container, .title-container > h3 {
   background-color: #1A237E;
+   color: #FFF;
 }
 
 .player-container {
-  background-color: #3F51B5;
+  /*background-color: #3F51B5;*/
+   background-color: #f9f9f9;
 }
 
 .queue-container {
   padding-top: 15px; padding-bottom: 15px; background-color: #673ab7;
+}
+
+.table-striped {
+   color: #000;
+   background-color: #E0E0E0;
+}
+
+td {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
 }
