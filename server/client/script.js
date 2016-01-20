@@ -137,6 +137,11 @@ function setUserDetails(user_id, username){
     }
 }
 
+function updatePlayerTrackDetails(title, thumbnail_url, artist){
+    $('#albumart').attr("src", thumbnail_url);
+    trackHeading.innerHTML = title +" by "+ artist;
+}
+
 function addToQueueView(track_title){
     console.log("addToQueueView",track_title);
     if (!track_title) return;
@@ -171,7 +176,10 @@ function setTrack(url, trackTitle){
         .then(function (sc_json){
             // Set track URL
             player.src = sc_json.stream_url;
-            trackHeading.innerHTML = sc_json.title +" by "+ sc_json.user.username;
+            // update view
+            updatePlayerTrackDetails(sc_json.title, sc_json.artwork_url, sc_json.user.username);
+
+            return sc_json;
         });
     }
 
