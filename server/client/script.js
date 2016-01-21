@@ -69,6 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
         switch(json.message){
             case "connection accepted":
                 setUserDetails(json.id);
+                getSongQueue();
                 break;
             case "newTrack":
                 setTrack(json.streamURL, json.trackTitle);
