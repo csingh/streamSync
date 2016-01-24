@@ -52,6 +52,7 @@
                     </div>
                     <h3 id="player-current"></h3>
 
+
                     <div class="synchronized-controls">
 
                         <i class="btn btn-default fa fa-play" onclick="sendSynchronizedPlayRequest()"></i>
@@ -60,12 +61,19 @@
                         <i class="btn btn-default fa fa-step-forward" onclick="sendSynchronizedNextSongRequest()"></i>
                         <i class="btn btn-default fa fa-clock-o" onclick="sendSynchronizedSeekRequest()"> Set</i>
                         <input value="1" id="seek-input" type="number" style="width:35px;"></input>
+
+                        <span id="countdown" style="display:none;">
+                            Song will play in
+                            <span id="countdown_sec">...</span>
+                        </span>
+                        
                         <h3>Synchronized Controls</h3>
                         <!-- <i class="btn btn-default fa fa-clock-o" onclick="sendSynchronizedSeekRequest()">Set Time</i> -->
                         <!-- <button onclick="applyFudgeFactorUpdate()">Fudge Factor</button> -->
                         <!-- <input value="1" id="fudge-input" type="number"></input> -->
 
                     </div>
+
 
                 </div>
                 <div class="col-md-4" style="margin-bottom: 25px;">
@@ -91,7 +99,7 @@
 
         <div class="container queue-container">
             <div class="col-md-10" style="padding-left: 0px;">
-              <input type="email" class="col-md-10 form-control" id="new-song-url" placeholder="Email">
+              <input type="text" class="col-md-10 form-control" id="new-song-url" placeholder="Audio stream url">
             </div>
             <button class="btn btn-default col-md-2" onclick="queueNewTrackUrl()">Add Track</button>
         </div>

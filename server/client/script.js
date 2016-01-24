@@ -85,6 +85,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log("Server is telling me to play at:", json.play_time);
                 var timeout = json.play_time - (new Date().getTime());
                 console.log("timeout:", timeout);
+
+                // display countdown to play song
+                countdown = timeout;
+                var interval = setInterval(function() {
+                    if (countdown < -2000) clearInterval(interval); //break the interval
+                    countdown = countdown - 1000;
+                    output = Math.floor(countdown/1000)
+
+                    // output to client
+                    if (output >= 0) {
+                        $("#countdown").show();
+                        $("#countdown_sec").text(Math.floor(countdown/1000));
+                    } else {
+                        $("#countdown").hide();
+                    }
+
+                    console.log("Countdown: ", countdown)
+                }, 1000);
+
+
+
                 setTimeout(function() {
                     console.log("Play!");
                     play();
