@@ -2,8 +2,8 @@
 
 App location: https://whispering-journey-4483.herokuapp.com/
 
+StreamSync allow multiple computers to play the same song synchronously, thus giving a surround sound effect.
 
-Automatic deployment is set on develop branch.
+Song must be provided from soundcloud, for example "https://soundcloud.com/futureclassic/chrome-sparks-lookin-at-me-2"
 
-
-Push develop commits to master branch: ```git push origin develop:master```
+Only works with desktop browsers. Mobile browsers are not supported.
