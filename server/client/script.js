@@ -10,13 +10,6 @@ var TRACK_LIST = {};
 document.addEventListener('DOMContentLoaded', function() {
     console.log("DOM ready");
 
-    // mobile player to activate automatic sound
-
-    var player_mobile = document.getElementById('player_mobile');
-    // player_mobile.src = "smw_coin.mp3";
-    // player_mobile.controls = true;
-
-
     // Save player object
     var player = document.getElementById('player');
 
