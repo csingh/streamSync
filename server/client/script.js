@@ -13,9 +13,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // mobile player to activate automatic sound
 
     var player_mobile = document.getElementById('player_mobile');
-    // window.player = player;
-    player_mobile.src = "smw_coin.mp3";
-    player_mobile.controls = true;
+    // player_mobile.src = "smw_coin.mp3";
+    // player_mobile.controls = true;
 
 
     // Save player object
