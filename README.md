@@ -6,4 +6,4 @@ StreamSync allow multiple computers to play the same song synchronously, thus gi
 
 Only works with desktop browsers. Mobile browsers are not supported.
 
-Song must be provided using from soundcloud, for example "https://soundcloud.com/futureclassic/chrome-sparks-lookin-at-me-2"
+Song must be provided from soundcloud, for example "https://soundcloud.com/futureclassic/chrome-sparks-lookin-at-me-2"
