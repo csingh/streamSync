@@ -51,11 +51,15 @@ wsServer.on('request', function(request) {
                     "id" : id,
                     "message" : "connection accepted"
                 });
-                sendJSON(connection, {
-                    "message" : "newTrack",
-                    "streamURL" : STREAM_URL,
-                    "trackTitle" : "Fire Track by Flaming Lips"
-                });
+                // DEFAULT STREAM
+                // sendJSON(connection, {
+                //     "message" : "newTrack",
+                //     "streamURL" : STREAM_URL,
+                //     "trackTitle" : "Fire Track by Flaming Lips"
+                // }); 
+                // On connection now triggers a getQueue on the client side
+                // DEFAULT STREAM
+
                 CLIENTS.push(connection);
                 PINGTIMES.push(0);
                 console.log("Connection from user " + id + " accepted.");
@@ -192,17 +196,22 @@ TRACK_LIST.getNext = function(){
     if (!TRACK_LIST.head){
     // If head is undefined return undefined
         // Stops firing of other conditions
-        // return TRACK_LIST.head;
+        return TRACK_LIST.head;
 
     } else if (!TRACK_LIST.head.next){ 
     // If next is undefined, then new head is undefined but tail would still hold a reference
-        TRACK_LIST.head.next = undefined;
-        TRACK_LIST.tail = undefined; 
+        var temp = TRACK_LIST.head;
+
+        TRACK_LIST.head = undefined;
+        TRACK_LIST.tail = undefined;
+
+        return temp;
+
     } else {
         // Otherwise new head is next in line
         TRACK_LIST.head = TRACK_LIST.head.next; 
+        return TRACK_LIST.head; 
     }
-    return TRACK_LIST.head; 
 }
 TRACK_LIST.addToQueue = function(newTrack){
 
