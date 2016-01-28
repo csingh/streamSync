@@ -201,16 +201,19 @@ function setTrack(url, trackTitle){
     // Parse the SC URL
     if (url){
         return parseSoundCloudLink(url)
-        .then(function (sc_json){
-            // Set track URL
-            player.src = sc_json.stream_url;
-            player.currentTime = 0;
-            // update view
-            updatePlayerTrackDetails(sc_json.title, sc_json.artwork_url, sc_json.user.username);
-
-            return sc_json;
-        });
+        .then(setStreamSource);
     }
+}
+
+function setStreamSource(sc_obj){
+    console.log("Setting Stream Source: ",sc_obj);
+    // Set track URL
+    player.src = sc_obj.stream_url;
+    player.currentTime = 0;
+    // update view
+    updatePlayerTrackDetails(sc_obj.title, sc_obj.artwork_url, sc_obj.user.username);
+
+    return sc_obj;
 }
 
 function play (offset){
@@ -303,7 +306,11 @@ function digestQueueStream(streamList){
         // arguments is JS keyword for a function args, the [0] is because this is a nested function?
         console.log(arguments[0]);
         var args = arguments[0];
-        for (i = 0; i < args.length; i++){
+
+        // Set the first item as the current track
+        setStreamSource(args[0]);//{ streamLink: args[0].stream_url, title: args[0].title, artist: args[0].user, albumart: args[0].artwork_url});
+
+        for (i = 1; i < args.length; i++){
             // Update queue with retrived information and update views
             TRACK_LIST.addToQueue({ streamLink: args[i].stream_url, title: args[i].title, artist: args[i].user.username, albumart: args[i].artwork_url});
             addToQueueView(args[i].title);
