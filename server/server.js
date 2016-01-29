@@ -47,7 +47,12 @@ wsServer.on('request', function(request) {
 
             if (json.message === 'connected') {
                 var id = CLIENTS.length;
-                sendJSON(connection, {
+
+                CLIENTS.push({ connection: connection });
+                PINGTIMES.push(0);
+                console.log("Connection from user " + id + " accepted.", connection);
+
+                sendJSON(CLIENTS[id], {
                     "id" : id,
                     "message" : "connection accepted"
                 });
@@ -60,13 +65,9 @@ wsServer.on('request', function(request) {
                 // On connection now triggers a getQueue on the client side
                 // DEFAULT STREAM
 
-                CLIENTS.push(connection);
-                PINGTIMES.push(0);
-                console.log("Connection from user " + id + " accepted.");
-
             } else if (json.message === 'ping') {
                 console.log("Ponging the ping.");
-                sendMessage(connection, "pong")
+                sendMessage({ connection: connection }, "pong")
 
             } else if (json.message === 'play') {
                 PLAY_MSG_RECEIVED_TIME = new Date().getTime();
@@ -177,6 +178,13 @@ wsServer.on('request', function(request) {
                     sendMessage(CLIENTS[i], "nextTrack");
 
                 }
+            } else if (json.message === 'setUsername') {
+                console.log("setUsername: ", json.username);
+
+                var id =  json.user_id;
+                console.log("### SETTING USERNAME: ", CLIENTS[id], json.username);
+                CLIENTS[id].username = json.username;
+                sendMessage(CLIENTS[id], "setUsername", "username", CLIENTS[id].username);
             }
 
         }
@@ -245,12 +253,13 @@ TRACK_LIST.trackingID = 0;
 
 // helpers
 
-function sendJSON(connection, json_obj) {
+function sendJSON(user_obj, json_obj) {
+    console.log("CLIENTS: ", CLIENTS);
     console.log("### MESSAGE SENDING: ", JSON.stringify(json_obj));
-    connection.send(JSON.stringify(json_obj));
+    user_obj.connection.send(JSON.stringify(json_obj));
 }
 
-function sendMessage(connection, msg, extra, value) {
+function sendMessage(user_obj, msg, extra, value) {
     var obj = {"message" : msg};
 
     // Add in extra parameters for things like seek or new track
@@ -258,5 +267,5 @@ function sendMessage(connection, msg, extra, value) {
         obj[extra] = value; 
     }
 
-    sendJSON(connection, obj);
+    sendJSON(user_obj, obj);
 }
