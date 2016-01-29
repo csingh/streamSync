@@ -72,6 +72,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 setUserDetails(json.id);
                 getSongQueue();
                 break;
+            case "setUsername":
+                setUserDetails(USER_ID, json.username);
+                break;
             case "newTrack":
                 setTrack(json.streamURL, json.trackTitle);
                 // Send confirmation back to server?
@@ -435,7 +438,7 @@ function createServerMessage(type) {
 function sendJSON(json_obj) {
     json_obj.user_id = USER_ID;
     json_obj.timestamp = new Date().getTime();
-    console.log("### MESSAGE SENDING: ", JSON.stringify(json_obj));
+    console.log("### MESSAGE SENDING: ", JSON.stringify(json_obj), json_obj);
     exampleSocket.send(JSON.stringify(json_obj));
 }
 
