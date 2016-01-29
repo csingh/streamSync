@@ -410,6 +410,13 @@ function sendCurrentSeekTime(){
     console.log("seekTime: "+player.currentTime);
 }
 
+function setUserName(){
+    var username = prompt("What shall we call you then?", "Jesus Christ Superstar");
+    
+    if (username != null) {
+        sendMessage("setUsername", "username", username);
+    }
+}
 //***************** Server control functions/API *****************
 
 // Send update message to server

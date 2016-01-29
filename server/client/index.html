@@ -35,7 +35,14 @@
             <div class="row">
                 <div class="col-md-8">
 
-                    <p>Connected as user #<span id="user_id"></span></p>
+                    <div style="display: inline-flex;">
+                        <p style="padding-top: 10px; padding-right: 5px;">
+                            Connected as user #<span id="user_id"></span>
+                        </p>
+                        <button class="btn btn-default fa fa-pencil" style="border: none; background-color: transparent;" onclick="setUserName()">
+                        </button>
+                    </div>
+
                     <h3 id="track-title">No Track Yet</h3>
                     <img src="https://i1.sndcdn.com/artworks-000063823754-2e9top-large.jpg" id="albumart"><br>
                     <audio id="player" preload="auto"> <!-- controls attribute also shows the seekbar -->
