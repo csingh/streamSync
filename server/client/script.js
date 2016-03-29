@@ -7,150 +7,155 @@ var PINGTIME = 0;
 var PONGTIME = 0;
 var TRACK_LIST = {};
 
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("DOM ready");
 
-    // Save player object
-    var player = document.getElementById('player');
 
-    console.log("player object is exposed as window.player");
-    window.player = player;
 
-    trackHeading = document.getElementById('track-title');
-    bufferView = document.getElementById("track-buffered");
+// ---- INIT ----
 
-    // After the player is ready and ws says play
-    // playerReady = true;
-    player.src = "smw_coin.mp3";
-    player.controls = true;
-    player.play();
+console.log("Running script.js");
 
-    // access client either through heroku or through localhost:
-    // heroku link: "https://whispering-journey-4483.herokuapp.com/"
-    // local host links: "http://localhost:5000/" or "http://127.0.0.1:5000/"
-    var loc = location.origin
-    if (loc.indexOf("127") > -1 || loc.indexOf("localhost") > -1  ){
-        exampleSocket = new WebSocket('ws://127.0.0.1:5000');
-    } else {
-        var host = loc.replace(/^http/, 'ws');
-        exampleSocket = new WebSocket(host);
+// Save player object
+var player = document.getElementById('player');
+
+console.log("player object is exposed as window.player");
+window.player = player;
+
+trackHeading = document.getElementById('track-title');
+bufferView = document.getElementById("track-buffered");
+
+// After the player is ready and ws says play
+// playerReady = true;
+player.src = "smw_coin.mp3";
+player.controls = true;
+player.play();
+
+// access client either through heroku or through localhost:
+// heroku link: "https://whispering-journey-4483.herokuapp.com/"
+// local host links: "http://localhost:5000/" or "http://127.0.0.1:5000/"
+var loc = location.origin
+if (loc.indexOf("127") > -1 || loc.indexOf("localhost") > -1  ){
+    exampleSocket = new WebSocket('ws://127.0.0.1:5000');
+} else {
+    var host = loc.replace(/^http/, 'ws');
+    exampleSocket = new WebSocket(host);
+}
+
+//Error HANDLERS
+exampleSocket.onerror = function (error){
+    console.log("Error while establishing WS: ", error);
+}
+
+//Close HANDLERS
+exampleSocket.onclose = function (event){
+    console.log("WS Closed ", event);
+    //alert("Connecton to Server Closed");
+}
+
+// Connection ready listener
+exampleSocket.onopen = function (event) {
+  //exampleSocket.send("Here's some text that the server is urgently awaiting!"); 
+  console.log("WebSocket Ready!");
+  sendMessage("connected");
+};
+
+// Once connection is setup wait for events to trigger
+exampleSocket.onmessage = function (event) {
+    var data = event.data;
+    console.log("### MESSAGE RECEIVED: ", event, data);
+
+    try {
+        var json = JSON.parse(event.data);
+
+    } catch (e) {
+        console.log('This doesn\'t look like a valid JSON: ', event.data);
+        return;
     }
 
-    //Error HANDLERS
-    exampleSocket.onerror = function (error){
-        console.log("Error while establishing WS: ", error);
+    switch(json.message){
+        case "connection accepted":
+            setUserDetails(json.id);
+            getSongQueue();
+            break;
+        case "setUsername":
+            setUserDetails(USER_ID, json.username);
+            break;
+        case "newTrack":
+            setTrack(json.streamURL, json.trackTitle);
+            // Send confirmation back to server?
+            break;
+        case "seek":
+            setPlayerTime(json.seek);
+            break;
+        case "play":
+            play(json.offset);
+            break;
+        case "play_at":
+            console.log("Server is telling me to play at:", json.play_time);
+            var timeout = json.play_time - (new Date().getTime());
+            console.log("timeout:", timeout);
+
+            // display countdown to play song
+            countdown = timeout;
+            var interval = setInterval(function() {
+                if (countdown < -2000) clearInterval(interval); //break the interval
+                countdown = countdown - 1000;
+                output = Math.floor(countdown/1000)
+
+                // output to client
+                if (output >= 0) {
+                    $("#countdown").show();
+                    $("#countdown_sec").text(Math.floor(countdown/1000));
+                } else {
+                    $("#countdown").hide();
+                }
+
+                console.log("Countdown: ", countdown)
+            }, 1000);
+
+
+
+            setTimeout(function() {
+                console.log("Play!");
+                play();
+            }, timeout);
+            break;
+        case "pause":
+            pause();
+            break;
+        case "getBufferedValue":
+            var bufferRatio = getBufferedValue();
+            sendBufferValue(bufferRatio);
+            break;
+        case "play_ping":
+            console.log("Got play_ping");
+            sendMessage("play_pong");
+            break;
+        case "pong":
+            PONGTIME = new Date().getTime();
+            console.log("Latency:", PONGTIME-PINGTIME, "ms.");
+            break;
+        case "seektime":
+            sendCurrentSeekTime();
+            break;
+        case "queueTrack":
+            // console.log("queueTrack", json);
+            addToQueueData(json);
+            break;
+        case "getQueue":
+            console.log("getQueue", json);
+            digestQueueStream(json.queue);
+            break;
+        case "nextTrack":
+            playNextTrack();
+            break;
+        default:
+            console.log("Un-recognized Request", json.type);
+            break;
     }
 
-    //Close HANDLERS
-    exampleSocket.onclose = function (event){
-        console.log("WS Closed ", event);
-        //alert("Connecton to Server Closed");
-    }
+}
 
-    // Connection ready listener
-    exampleSocket.onopen = function (event) {
-      //exampleSocket.send("Here's some text that the server is urgently awaiting!"); 
-      console.log("WebSocket Ready!");
-      sendMessage("connected");
-    };
-
-    // Once connection is setup wait for events to trigger
-    exampleSocket.onmessage = function (event) {
-        var data = event.data;
-        console.log("### MESSAGE RECEIVED: ", event, data);
-
-        try {
-            var json = JSON.parse(event.data);
-
-        } catch (e) {
-            console.log('This doesn\'t look like a valid JSON: ', event.data);
-            return;
-        }
-
-        switch(json.message){
-            case "connection accepted":
-                setUserDetails(json.id);
-                getSongQueue();
-                break;
-            case "setUsername":
-                setUserDetails(USER_ID, json.username);
-                break;
-            case "newTrack":
-                setTrack(json.streamURL, json.trackTitle);
-                // Send confirmation back to server?
-                break;
-            case "seek":
-                setPlayerTime(json.seek);
-                break;
-            case "play":
-                play(json.offset);
-                break;
-            case "play_at":
-                console.log("Server is telling me to play at:", json.play_time);
-                var timeout = json.play_time - (new Date().getTime());
-                console.log("timeout:", timeout);
-
-                // display countdown to play song
-                countdown = timeout;
-                var interval = setInterval(function() {
-                    if (countdown < -2000) clearInterval(interval); //break the interval
-                    countdown = countdown - 1000;
-                    output = Math.floor(countdown/1000)
-
-                    // output to client
-                    if (output >= 0) {
-                        $("#countdown").show();
-                        $("#countdown_sec").text(Math.floor(countdown/1000));
-                    } else {
-                        $("#countdown").hide();
-                    }
-
-                    console.log("Countdown: ", countdown)
-                }, 1000);
-
-
-
-                setTimeout(function() {
-                    console.log("Play!");
-                    play();
-                }, timeout);
-                break;
-            case "pause":
-                pause();
-                break;
-            case "getBufferedValue":
-                var bufferRatio = getBufferedValue();
-                sendBufferValue(bufferRatio);
-                break;
-            case "play_ping":
-                console.log("Got play_ping");
-                sendMessage("play_pong");
-                break;
-            case "pong":
-                PONGTIME = new Date().getTime();
-                console.log("Latency:", PONGTIME-PINGTIME, "ms.");
-                break;
-            case "seektime":
-                sendCurrentSeekTime();
-                break;
-            case "queueTrack":
-                // console.log("queueTrack", json);
-                addToQueueData(json);
-                break;
-            case "getQueue":
-                console.log("getQueue", json);
-                digestQueueStream(json.queue);
-                break;
-            case "nextTrack":
-                playNextTrack();
-                break;
-            default:
-                console.log("Un-recognized Request", json.type);
-                break;
-        }
-
-    }
-});
+// ---- END INIT ----
 
 function l(object){ console.log(object); }
     // streamURL: "https://api.soundcloud.com/tracks/53126096/stream?client_id=86e82361b4e6d0f88da0838793618a92",
