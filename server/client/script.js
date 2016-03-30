@@ -7,9 +7,6 @@ var PINGTIME = 0;
 var PONGTIME = 0;
 var TRACK_LIST = {};
 
-
-
-
 // ---- INIT ----
 
 console.log("Running script.js");
@@ -20,14 +17,46 @@ var player = document.getElementById('player');
 console.log("player object is exposed as window.player");
 window.player = player;
 
+// --- mobile stuff
+
+var CACHED_SONG = null;
+var KEEP_LOOPING = true;
+
+function loop() {
+    console.log("loop()");
+    if (KEEP_LOOPING) {
+        console.log("loop-de-loop");
+        player.play();        
+        window.setTimeout(loop, 1000);
+    }
+}
+
+function cache_song(song_url) {
+    console.log("cache_song:", song_url);
+    CACHED_SONG = song_url;
+    var CACHER = new Audio(song_url);
+}
+
+function play_song() {
+    KEEP_LOOPING = false
+    player.src = CACHED_SONG;
+    player.play();
+}
+
+
+$("#ready").click(function() {
+    loop();
+});
+
+// --- end mobile stuff ---
+
 trackHeading = document.getElementById('track-title');
 bufferView = document.getElementById("track-buffered");
 
 // After the player is ready and ws says play
 // playerReady = true;
-player.src = "smw_coin.mp3";
+player.src = "blank_1000ms.mp3";
 player.controls = true;
-player.play();
 
 // access client either through heroku or through localhost:
 // heroku link: "https://whispering-journey-4483.herokuapp.com/"
@@ -216,8 +245,8 @@ function setTrack(url, trackTitle){
 function setStreamSource(sc_obj){
     console.log("Setting Stream Source: ",sc_obj);
     // Set track URL
-    player.src = sc_obj.stream_url;
-    player.currentTime = 0;
+
+    cache_song(sc_obj.stream_url);
     // update view
     updatePlayerTrackDetails(sc_obj.title, sc_obj.artwork_url, sc_obj.user.username);
 
@@ -226,7 +255,7 @@ function setStreamSource(sc_obj){
 
 function play (offset){
     if (offset) player.currentTime += offset;
-    player.play();
+    play_song();
     millisecondCounter();
 
     // Set the track ended listener
@@ -241,12 +270,14 @@ function pause(){
 }
 
 function playNextTrack(offset){
+    console.log("playNextTrack");
     // Get next track
     var trackObj = TRACK_LIST.getNext();
     if (trackObj){
         console.log(trackObj);
         // Play next track
-        player.src = trackObj.streamLink;
+        // player.src = trackObj.streamLink;
+        cache_song(trackObj.streamLink);
         // Update player view
         updatePlayerTrackDetails(trackObj.title, trackObj.albumart, trackObj.artist);
         // Update queue view

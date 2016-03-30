@@ -201,6 +201,8 @@ TRACK_LIST.getCurrent = function(){
     return TRACK_LIST.head; 
 }
 TRACK_LIST.getNext = function(){ 
+    console.log("getNext:", TRACK_LIST);
+    
     if (!TRACK_LIST.head){
     // If head is undefined return undefined
         // Stops firing of other conditions
