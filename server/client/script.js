@@ -13,6 +13,7 @@ console.log("Running script.js");
 
 // Save player object
 var player = document.getElementById('player');
+player.preload = "auto";
 
 console.log("player object is exposed as window.player");
 window.player = player;
@@ -35,6 +36,7 @@ function cache_song(song_url) {
     console.log("cache_song:", song_url);
     CACHED_SONG = song_url;
     var CACHER = new Audio(song_url);
+    CACHER.preload = "auto";
 }
 
 function play_song() {
